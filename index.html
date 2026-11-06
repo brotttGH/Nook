@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nook</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef0f8;--card:#fff;--ink:#1b1d3a;--mute:#6a6e90;--line:#dcdff0;--acc:#4f46e5;--accsoft:#e6e4fd;--heart:#e11d68;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14152a;--card:#1d1f3b;--ink:#eceefc;--mute:#9a9ec6;--line:#2d3058;--acc:#8b85ff;--accsoft:#2a2a5a;--heart:#ff5c93;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14152a;--card:#1d1f3b;--ink:#eceefc;--mute:#9a9ec6;--line:#2d3058;--acc:#8b85ff;--accsoft:#2a2a5a;--heart:#ff5c93;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/var(--lh,1.5) var(--body,Figtree,system-ui,sans-serif)}
+.wrap{max-width:var(--mw,560px);margin:0 auto;padding:0 14px 40px;zoom:var(--fs,1)}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 2px 10px}
+h1{margin:0;font:800 30px/1 var(--head,'Bricolage Grotesque',Figtree,sans-serif);letter-spacing:-.03em}
+.me{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mute)}
+.card{background:var(--card);border:var(--bw,1px) solid var(--line);border-radius:var(--r,18px);padding:var(--pad,14px);margin-bottom:var(--gap,12px)}
+.av{width:40px;height:40px;border-radius:var(--avr,50%);display:grid;place-items:center;color:#fff;font:800 16px var(--head,'Bricolage Grotesque',Figtree,sans-serif);flex:none}
+.row{display:flex;gap:12px}
+textarea{width:100%;border:0;outline:0;resize:none;background:transparent;color:var(--ink);font:inherit;min-height:64px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.count{font-size:13px;color:var(--mute)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:var(--mute)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.post-btn{background:var(--acc);color:#fff;font-weight:600;padding:8px 18px;border-radius:999px}
+.post-btn:disabled{opacity:.4;cursor:default}
+.who{font-weight:600}.when{font-size:13px;color:var(--mute);margin-left:6px;font-weight:400}
+.txt{margin:2px 0 8px;white-space:pre-wrap;overflow-wrap:anywhere}
+.acts{display:flex;gap:18px;font-size:14px}
+.acts button{padding:4px 0;display:flex;gap:5px;align-items:center}
+.acts .liked{color:var(--heart);font-weight:600}
+.cm{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.cm p{margin:0 0 8px;font-size:15px}.cm b{font-weight:600}
+.cm form{display:flex;gap:8px}
+.cm input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit}
+.cm form button{color:var(--acc);font-weight:600}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+.auth h2{margin:0 0 10px;font:800 20px/1.2 var(--head,'Bricolage Grotesque',Figtree,sans-serif)}
+.auth input{display:block;width:100%;margin-bottom:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit}
+.auth .er{color:var(--heart);font-size:14px;min-height:20px;margin:0 0 6px}
+.auth .sw{color:var(--acc);font-weight:600;margin-left:12px}
+.auth small{display:block;margin-top:10px;color:var(--mute);font-size:13px}
+.me button{color:var(--acc);font-weight:600}
+[hidden]{display:none!important}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 2px;margin-top:2px}
+.tab{flex:none;padding:8px 14px;border-radius:12px 12px 0 0;background:transparent;color:var(--mute);font-weight:600;font-size:14px;border:1px solid transparent;border-bottom:0;white-space:nowrap}
+.tab.on{background:var(--card);color:var(--ink);border-color:var(--line)}
+.addr{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:8px 10px;margin-bottom:12px}
+.path{flex:1;min-width:0;font-size:14px;color:var(--mute);background:var(--bg);border-radius:999px;padding:5px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.addr button{font-size:14px;padding:4px 8px;border-radius:8px}
+.addr button.on{background:var(--accsoft);color:var(--acc);font-weight:600}
+.chip{margin-left:8px;font-size:12px;background:var(--accsoft);color:var(--acc);border-radius:999px;padding:1px 8px;font-weight:600}
+#pa{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:5px 8px;font:inherit;font-size:14px}
+input.path{border:0;outline:0;font:inherit;font-size:14px;color:var(--ink)}
+.h{margin:0 0 8px;font:800 18px/1.2 var(--head,'Bricolage Grotesque',Figtree,sans-serif)}
+button.who{color:var(--ink);padding:0;font-weight:600}
+.item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);width:100%;text-align:left;color:var(--ink)}
+.item:last-child{border-bottom:0}
+.thread{display:flex;flex-direction:column;margin:8px 0}
+.msg{width:fit-content;max-width:80%;padding:8px 12px;border-radius:16px;margin:3px 0;background:var(--bg);overflow-wrap:anywhere}
+.msg.me{background:var(--acc);color:#fff;margin-left:auto}
+.composer{display:flex;gap:8px;align-items:center}
+.composer input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit}
+.pill{border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--ink)}
+.pill.on{background:var(--accsoft);color:var(--acc);border-color:var(--acc);font-weight:600}
+.danger{color:var(--heart);font-weight:600}
+small.n{display:block;color:var(--mute);font-size:13px;margin-top:8px}
+.tabw{flex:none;display:flex;align-items:center;border-radius:12px 12px 0 0;border:1px solid transparent;border-bottom:0;color:var(--mute)}
+.tabw.on{background:var(--card);border-color:var(--line)}
+.tabw button{padding:8px 4px 8px 12px;font-weight:600;font-size:14px;color:inherit}
+.tabw.on button{color:var(--ink)}
+.tabw button.x{padding:8px 10px 8px 4px;font-size:18px;line-height:1;font-weight:400}
+.tabw.pin button{padding-right:12px}
+.hub{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hubtile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:left;color:var(--ink);min-height:100px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;border-radius:var(--r,18px)}
+.hubtile b{font:800 20px/1.1 var(--head,'Bricolage Grotesque',Figtree,sans-serif)}
+.hubtile span{font-size:13px;color:var(--mute)}
+.hubtile.on{border-color:var(--acc)}
+.ph{text-align:center}
+.av.bigav{width:84px;height:84px;font-size:34px;margin:0 auto 8px}
+.stats{display:flex;justify-content:center;gap:12px 22px;flex-wrap:wrap;margin:12px 0}
+.stats b{display:block;font:800 19px var(--head,'Bricolage Grotesque',Figtree,sans-serif);color:var(--ink)}
+.stats span{font-size:13px;color:var(--mute)}
+.pbtns{display:flex;justify-content:center;gap:8px}
+.ptabs{display:flex;border-bottom:1px solid var(--line);margin:0 0 8px}
+.ptabs button{flex:1;padding:10px;font-weight:600;border-bottom:2px solid transparent}
+.ptabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(var(--gc,3),1fr);gap:3px}
+.tile2{aspect-ratio:3/4;border-radius:calc(var(--r,18px)/3);padding:8px;color:#fff;text-align:left;display:flex;flex-direction:column;justify-content:space-between;font-size:13px;line-height:1.3;overflow:hidden}
+.tile2 .t{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+@keyframes tin{from{opacity:0;transform:translateX(-12px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0;transform:scale(.85)}}
+@keyframes msgin{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+#view.enter{animation:rise .3s cubic-bezier(.2,.7,.3,1)}
+body,.card,.tabw,.addr{transition:background-color .3s,color .3s,border-color .3s}
+button{transition:transform .12s,background-color .2s,color .2s,opacity .2s}
+button:active{transform:scale(.95)}
+.tabw.new{animation:tin .28s cubic-bezier(.2,.7,.3,1)}
+.tabw.out{animation:tout .15s ease-in forwards}
+.hubtile,.tile2{transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s}
+@media (hover:hover){.hubtile:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(40,40,90,.14)}.tile2:hover{transform:scale(1.03)}}
+.hrt{display:inline-block}.hrt.pop{animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.msg.fresh{animation:msgin .25s ease-out}
+.ptabs button{transition:border-color .2s,color .2s}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+html[data-bg="tint"] body{background:color-mix(in srgb,var(--acc) 9%,var(--bg))}
+html[data-bg="pure"] body{background:var(--card)}
+html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="off"] *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+.dot{width:32px;height:32px;border-radius:50%;border:2px solid transparent;padding:0;flex:none}
+.dot.on{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--card)}
+input[type=color]{width:36px;height:32px;border:0;padding:0;background:none;cursor:pointer;border-radius:8px}
+.ef input,.ef textarea{display:block;width:100%;margin-bottom:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:9px 12px;font:inherit}
+.ef textarea{min-height:70px}
+</style>
+<style>
+.cvs{display:block;width:100%;max-width:300px;margin:10px auto;border:1px solid var(--line);border-radius:12px;background:#fff;touch-action:none;cursor:crosshair}
+.cvs.chk{background:repeating-conic-gradient(#e4e4ee 0 25%,#fff 0 50%) 50%/16px 16px}
+.chars{display:flex;flex-wrap:wrap;gap:4px}
+.chars button{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-weight:600;padding:0}
+.chars button.on{background:var(--accsoft)}
+.chars button.cur{outline:2px solid var(--acc)}
+input[type=range]{accent-color:var(--acc)}
+</style>
+<style>
+.av{overflow:hidden}.av img{width:100%;height:100%;object-fit:cover;display:block}
+video.pic{background:#000;max-height:360px}
+.hype{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
+.hype i{position:absolute;top:-16px;width:10px;height:14px;border-radius:2px;animation:hfall 2.4s ease-in forwards}
+.hype b{position:absolute;bottom:-50px;animation:hrise 2.6s ease-out forwards}
+.hype em{position:absolute;inset:0;box-shadow:inset 0 0 120px 30px var(--acc);animation:hglow 2.4s ease-out forwards}
+.hype .ht{position:absolute;top:calc(env(safe-area-inset-top,0px) + 24px);left:50%;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-weight:700;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:htin 3s ease forwards}
+@keyframes hfall{to{transform:translate(var(--dx),110vh) rotate(720deg)}}
+@keyframes hrise{0%{opacity:1}to{transform:translateY(-115vh) rotate(18deg);opacity:0}}
+@keyframes hglow{0%{opacity:0}30%{opacity:1}to{opacity:0}}
+@keyframes htin{0%{opacity:0;transform:translate(-50%,-20px)}12%,80%{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-10px)}}
+html[data-cs="shadow"] .card{box-shadow:0 6px 18px rgba(30,30,80,.14)}
+html[data-cs="glass"] .card{background:color-mix(in srgb,var(--card) 68%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html[data-ts="off"] .when{display:none}
+.thumb{width:60px;border-radius:10px;flex:none;align-self:flex-start}
+.h{font-size:calc(18px*var(--hs,1))!important}h1{font-size:calc(30px*var(--hs,1))!important}
+html[data-bs="soft"] .post-btn{background:var(--accsoft);color:var(--acc)}
+html[data-bs="outline"] .post-btn{background:transparent;color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc)}
+html[data-tb="line"] .tabw{border-radius:0;background:none!important;border-color:transparent!important}
+html[data-tb="line"] .tabw.on{border-bottom:2px solid var(--acc)!important}
+html[data-tb="pill"] .tabw{border-radius:999px;margin:0 2px 6px;border:1px solid var(--line)}
+html[data-tb="pill"] .tabw.on{background:var(--accsoft);border-color:var(--acc)}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.sl{display:block;margin:10px 0}.sl input{width:100%}
+.nmi{display:block;width:100%;margin-bottom:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:8px 10px;font:inherit}
+.bdg{width:18px;height:18px;vertical-align:-4px;margin-left:3px}
+.x2{color:var(--mute);padding:0 4px;margin-left:4px}
+.pic{display:block;max-width:100%;border-radius:12px;margin:4px 0 8px}
+.msg .pic{max-width:240px;margin:0 0 4px}
+.ef select{display:block;width:100%;margin-bottom:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:9px 12px;font:inherit}
+</style>
+<style id="cust"></style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1 id="appn">Nook</h1><div class="me" id="who"></div></header>
+  <p class="er" id="tob" role="status" hidden style="margin:0 2px 8px"></p>
+  <p class="card" id="anb" role="status" hidden style="margin-bottom:10px;font-weight:600"></p>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Main"></nav>
+  <div class="addr"><input class="path" id="addr" aria-label="Address bar" spellcheck="false" autocapitalize="none" autocomplete="off">
+    <span id="homebar" style="display:flex;gap:4px;align-items:center"><select id="arf" aria-label="Filter by area"></select><button data-sort="new">Newest</button><button data-sort="top">Top</button></span></div>
+  <section class="card auth" id="auth" hidden>
+    <h2 id="at">Log in</h2>
+    <form id="af">
+      <input id="u" placeholder="Username" autocomplete="username" maxlength="20" autocapitalize="none" aria-label="Username" hidden>
+      <input id="em" type="email" placeholder="Email" autocomplete="email" aria-label="Email">
+      <input id="p" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password">
+      <p class="er" id="er" role="alert"></p>
+      <button class="post-btn" id="ab">Log in</button>
+      <button type="button" class="sw" id="sw">New here? Sign up</button>
+    </form>
+    <div class="acts" id="oa" style="gap:8px;margin-top:12px;flex-wrap:wrap"><button class="pill" data-oauth="google">Continue with Google</button><button class="pill" data-oauth="discord">Continue with Discord</button></div>
+    <small id="rules" hidden>Use 8+ characters with a capital, a lowercase letter, a number, and a symbol.</small>
+  </section>
+  <section class="card" id="comp" aria-label="New post" hidden>
+    <div class="row"><div class="av" id="meav"></div>
+      <div style="flex:1"><textarea id="t" maxlength="280" placeholder="What’s on your mind?"></textarea></div></div>
+    <div id="pimg" hidden style="margin:6px 0"><img class="pic" alt="Attached photo" style="max-height:200px"><video id="pvid" class="pic" controls playsinline hidden></video><button type="button" class="pill" data-rmimg>Remove media</button></div>
+    <div class="bar"><span class="count" id="c">280</span><button type="button" class="pill" data-attach="post">Media</button><select id="pa" aria-label="Post to area"></select><button class="post-btn" id="go" disabled>Post</button></div>
+  </section>
+  <form class="card composer" id="ff" hidden><input id="fu" placeholder="Add a friend by username" maxlength="20" autocapitalize="none" aria-label="Friend username"><button class="post-btn">Add</button></form>
+  <p class="er" id="fe" role="alert"></p>
+  <section class="card" id="admp" hidden><h2 class="h">Admin tools <span class="count" id="admt"></span></h2>
+    <div class="acts" style="gap:8px;flex-wrap:wrap;align-items:center"><input id="gn2" type="number" inputmode="numeric" placeholder="Coins" aria-label="Coins to give" style="width:90px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:7px 9px;font:inherit"><button class="pill" data-adm="give">Give coins</button><button class="pill" data-adm="reset">Reset hype timer</button></div>
+    <div class="acts" style="margin-top:8px;gap:8px;flex-wrap:wrap;align-items:center"><select id="tos" aria-label="Timeout length"><option value="10">10 minutes</option><option value="60">1 hour</option><option value="1440">1 day</option><option value="10080">1 week</option></select><button class="pill" data-adm="timeout">Time out</button><button class="pill" data-adm="untimeout">Lift timeout</button></div></section>
+  <form class="card ef" id="shf" hidden><h2 class="h">Sell your design</h2><p class="count" style="margin-bottom:8px">Lists your current look from Customize and Settings: theme, font, background, and outline.</p><input id="sn" placeholder="Design name" maxlength="40" aria-label="Design name"><input id="sd" placeholder="Description (optional)" maxlength="160" aria-label="Description"><input id="sp" type="number" inputmode="numeric" min="0" max="999" placeholder="Price in coins (0 = free)" aria-label="Price in coins"><p class="count" id="shfee" style="margin-bottom:8px"></p><button class="post-btn">List my current look</button></form>
+  <section class="card" id="bdg" hidden><h2 class="h">Draw a badge</h2>
+    <canvas class="cvs chk" id="bcv" width="160" height="160" style="max-width:200px"></canvas>
+    <div class="acts" style="gap:8px;flex-wrap:wrap;align-items:center"><input type="color" id="bcol" value="#e11d68" aria-label="Brush color"><input type="range" id="bsz" min="2" max="30" value="10" aria-label="Brush size"><button class="pill" id="bundo" type="button">Undo</button><button class="pill" id="bclr" type="button">Clear</button></div>
+    <div class="acts" style="margin-top:10px;gap:8px"><input class="nmi" id="bnm" placeholder="Badge name" maxlength="24" aria-label="Badge name" style="margin:0;flex:1"><button class="post-btn" id="bmk" type="button">Create badge</button></div></section>
+  <form class="card ef" id="evf" hidden><h2 class="h">Create an event</h2><input id="et" placeholder="Event title" maxlength="60" aria-label="Event title"><input id="ed" placeholder="Description (optional)" maxlength="300" aria-label="Description"><input id="es" type="datetime-local" aria-label="Start time"><select id="edu" aria-label="Length"><option value="60">1 hour</option><option value="180">3 hours</option><option value="1440">1 day</option><option value="10080">1 week</option></select><input id="ec" type="number" inputmode="numeric" min="0" placeholder="Coin reward for attendees (optional)" aria-label="Coin reward"><select id="eb" aria-label="Badge reward"><option value="">No badge reward</option></select><button class="post-btn">Create event</button></form>
+  <form class="card composer" id="anf" hidden><input id="ant" placeholder="Announcement shown to everyone" maxlength="200" aria-label="Announcement"><button class="post-btn">Post</button><button type="button" class="pill" data-anoff>Clear</button></form>
+  <form class="card ef" id="gcf" hidden><h2 class="h">Create a group</h2><input id="gn" placeholder="Group name" maxlength="40" aria-label="Group name"><input id="gd" placeholder="Description (optional)" maxlength="160" aria-label="Description"><select id="gv" aria-label="Who can see this group"><option value="public">Public: anyone can see and join</option><option value="private">Private: invite only</option></select><button class="post-btn">Create group</button></form>
+  <main id="view"></main>
+  <form class="card composer" id="gf" hidden><button type="button" class="pill" data-attach="grp">Media</button><input id="gt" placeholder="Message the group" maxlength="500" aria-label="Group message"><button class="post-btn">Send</button></form>
+  <form class="card composer" id="gi" hidden><input id="gu" placeholder="Invite someone by username" maxlength="20" autocapitalize="none" aria-label="Invite username"><button class="pill">Invite</button></form>
+  <form class="card composer" id="dmf" hidden><button type="button" class="pill" data-attach="dm">Media</button><input id="dt" placeholder="Write a message" maxlength="500" aria-label="Message"><button class="post-btn">Send</button></form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
+<script>
+/* ====== SETUP: paste your two Supabase values here (see README.md) ====== */
+const SUPABASE_URL='https://zthhhwzdcatiwzkuxpqn.supabase.co';
+const SUPABASE_KEY='sb_publishable_Ezd8DJWPQ8aCywOsabWp5g_fCxUWmXO';
+/* ======================================================================== */
+const sb=(window.supabase&&!SUPABASE_URL.includes('PASTE'))?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const mediaUrl=p=>SUPABASE_URL+'/storage/v1/object/public/media/'+p;
+function makeDb(sb){
+  const caches={},ls=[],loaded={},done={};
+  const rid=()=>(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):Math.random().toString(36).slice(2)+Date.now().toString(36)).slice(0,20);
+  const notify=n=>ls.filter(l=>l.n===n).forEach(l=>l.run());
+  const put=(c,id,d)=>{(caches[c]=caches[c]||new Map()).set(id,d);notify(c)};
+  const del=(c,id)=>{if(caches[c]&&caches[c].delete(id))notify(c)};
+  const ch=sb.channel('docs').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+    if(p.eventType==='DELETE'){const o=p.old||{};if(o.collection)del(o.collection,o.id)}
+    else{const r=p.new;if(r&&loaded[r.collection])put(r.collection,r.id,r.data)}});
+  const ready=new Promise(res=>{ch.subscribe(st=>{if(st==='SUBSCRIBED')res()});setTimeout(res,6000)});
+  function load(n){
+    if(loaded[n])return loaded[n];
+    return loaded[n]=(async()=>{
+      await ready;const m=new Map();let from=0;
+      for(;;){const {data,error}=await sb.from('docs').select('id,data').eq('collection',n).order('id').range(from,from+999);
+        if(error)throw error;data.forEach(r=>m.set(r.id,r.data));if(data.length<1000)break;from+=1000}
+      caches[n]=m;done[n]=true;notify(n)})();
+  }
+  const snap=(id,d)=>({id,data:()=>d});
+  class Q{
+    constructor(n,o,l){this.n=n;this.o=o;this.l=l}
+    orderBy(f,d){return new Q(this.n,[f,d||'asc'],this.l)}
+    limit(k){return new Q(this.n,this.o,k)}
+    get(){
+      const rows=[...(caches[this.n]||new Map()).entries()];
+      if(this.o){const [f,d]=this.o;rows.sort((a,b)=>((a[1][f]>b[1][f])-(a[1][f]<b[1][f]))*(d==='desc'?-1:1))}
+      return {docs:(this.l?rows.slice(0,this.l):rows).map(([id,d])=>snap(id,d))};
+    }
+    onSnapshot(cb,err){
+      const l={n:this.n,run:()=>{if(done[this.n])cb(this.get())}};ls.push(l);
+      load(this.n).then(()=>l.run()).catch(e=>err&&err(e));
+      return()=>{const i=ls.indexOf(l);if(i>=0)ls.splice(i,1)};
+    }
+    add(data){const id=rid();return db.doc(this.n+'/'+id).set(data).then(()=>({id}))}
+  }
+  const db={
+    collection:n=>new Q(n),
+    doc(path){
+      const i=path.indexOf('/'),c=path.slice(0,i),id=path.slice(i+1);
+      const self={id,
+        async get(){const {data,error}=await sb.from('docs').select('data').eq('collection',c).eq('id',id).maybeSingle();if(error)throw error;return {exists:!!data,id,data:()=>data&&data.data}},
+        async set(d){const {error}=await sb.from('docs').upsert({collection:c,id,data:d});if(error)throw error;put(c,id,d)},
+        async update(p){const cur=await self.get(),nd={...(cur.exists?cur.data():{}),...p};if(cur.exists){const {data,error}=await sb.from('docs').update({data:nd}).eq('collection',c).eq('id',id).select('id');if(error)throw error;if(!data.length)throw new Error('denied')}else{const {error}=await sb.from('docs').insert({collection:c,id,data:nd});if(error)throw error}put(c,id,nd)},
+        async delete(){const {data,error}=await sb.from('docs').delete().eq('collection',c).eq('id',id).select('id');if(error)throw error;if(!data.length&&caches[c]&&caches[c].has(id))throw new Error('denied');del(c,id)}
+      };return self;
+    },
+    reload(){Object.keys(loaded).forEach(n=>{loaded[n]=null;done[n]=false;load(n).catch(()=>{})})}
+  };
+  return db;
+}
+const COLORS=['#4f46e5','#0d9488','#c2410c','#be185d','#7c3aed','#0369a1'];
+const AREAS={general:'General',tech:'Tech',music:'Music',games:'Games',art:'Art',sports:'Sports',food:'Food'};
+const TABS=[['home','Home'],['feed','Feed'],['friends','Friends'],['dms','DMs'],['groups','Groups'],['profile','Profile'],['events','Events'],['leaderboard','Leaderboard'],['shop','Shop'],['settings','Settings'],['custom','Customize'],['admin','Admin']];
+const col=n=>COLORS[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length];
+const ago=t=>{const m=Math.floor((Date.now()-t)/6e4);return m<1?'now':m<60?m+'m':m<1440?Math.floor(m/60)+'h':Math.floor(m/1440)+'d'};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+let db,me=null,posts=[],likes=[],cms=[],friends=[],dms=[],profs={},open={},mode='login',tab='home',opened=['home'],ctab='font',gch='A',admins=[],armU=null,ppic='',pbn='',pendV=null,hypes=[],grants=[],resets=[],timeouts=[],ttm=null,lb='coins',isOwner=false,badges=[],awards=[],events=[],rsvps=[],fees=[],badgeFor=null,shop=[],sales=[],announce=[],accts=[],accSub=false,prevLook=null,groups=[],members=[],invites=[],gmsgs=[],gid=null,pend=null,curFace=null,newTab=null,justLiked=null,ptab='posts',vp=null,cur='all',sort='new',vu=null,chat=null,editing=false,armed=false,theme='system';
+try{theme=localStorage.getItem('nook-theme')||'system'}catch(e){}
+const applyTheme=()=>{const r=document.documentElement;theme==='system'?r.removeAttribute('data-theme'):r.setAttribute('data-theme',theme)};applyTheme();
+const PCOLORS=['#4f46e5','#0d9488','#e11d68','#ea580c','#0284c7','#7c3aed','#16a34a'];
+const FONTS={modern:["Figtree,system-ui,sans-serif","'Bricolage Grotesque',Figtree,sans-serif"],classic:["Georgia,'Times New Roman',serif","Georgia,'Times New Roman',serif"],round:["ui-rounded,'SF Pro Rounded',system-ui,sans-serif","ui-rounded,'SF Pro Rounded',system-ui,sans-serif"],mono:["ui-monospace,Menlo,Consolas,monospace","ui-monospace,Menlo,Consolas,monospace"]};
+FONTS.custom=["NookCustom,Figtree,system-ui,sans-serif","NookCustom,'Bricolage Grotesque',Figtree,sans-serif"];
+const DEF={bg:'soft',font:'modern',fs:'1',r:'round',den:'cozy',motion:'on',hype:'on',hstyle:'confetti',coins:'on',av:'circle',cs:'flat',w:'normal',lh:'normal',gc:'3',ts:'on',bs:'filled',tb:'box'};
+let ui={},pcol='';try{ui=JSON.parse(localStorage.getItem('nook-ui')||'{}')}catch(e){}
+const saveUI=()=>{try{localStorage.setItem('nook-ui',JSON.stringify(ui))}catch(e){}};
+function applyUI(){
+  const r=document.documentElement,st=r.style;
+  if(ui.acc){st.setProperty('--acc',ui.acc);st.setProperty('--accsoft',`color-mix(in srgb,${ui.acc} 18%,var(--card))`)}else{st.removeProperty('--acc');st.removeProperty('--accsoft')}
+  const f=FONTS[ui.font||'modern']||FONTS.modern;st.setProperty('--body',f[0]);st.setProperty('--head',f[1]);
+  st.setProperty('--fs',ui.fs||'1');
+  st.setProperty('--r',({sharp:'6px',round:'18px',pill:'28px'})[ui.r||'round']||'18px');
+  const c=ui.den==='compact';st.setProperty('--pad',c?'9px':'14px');st.setProperty('--gap',c?'7px':'12px');
+  r.dataset.bg=ui.bg||'soft';r.dataset.motion=ui.motion||'on';
+  r.dataset.cs=ui.cs||'flat';r.dataset.ts=ui.ts||'on';
+  st.setProperty('--avr',({circle:'50%',round:'24%',square:'4px'})[ui.av||'circle']||'50%');
+  st.setProperty('--mw',({narrow:'480px',normal:'560px',wide:'760px'})[ui.w||'normal']||'560px');
+  st.setProperty('--lh',({tight:'1.3',normal:'1.5',airy:'1.75'})[ui.lh||'normal']||'1.5');
+  st.setProperty('--gc',ui.gc||'3');
+  ['--bg','--card','--ink','--mute','--line','--heart'].forEach(v=>{const c=(ui.cols||{})[v];if(c)st.setProperty(v,c);else st.removeProperty(v)});
+  if(ui.rpx!==undefined)st.setProperty('--r',ui.rpx+'px');
+  if(ui.padpx!==undefined)st.setProperty('--pad',ui.padpx+'px');
+  if(ui.gappx!==undefined)st.setProperty('--gap',ui.gappx+'px');
+  st.setProperty('--bw',(ui.bw!==undefined?ui.bw:1)+'px');st.setProperty('--hs',ui.hs||'1');
+  r.dataset.bs=ui.bs||'filled';r.dataset.tb=ui.tb||'box';
+  const an=document.getElementById('appn');if(an)an.textContent=ui.appn||'Nook';
+}
+applyUI();
+let cust={glyphs:{},fw:80};try{Object.assign(cust,JSON.parse(localStorage.getItem('nook-cust')||'{}'))}catch(e){}
+const saveCust=()=>{try{localStorage.setItem('nook-cust',JSON.stringify(cust));return true}catch(e){return false}};
+function applyCust(){
+  let c='';
+  if(cust.bg)c+=`html body{background-image:url("${cust.bg}")!important;background-size:${cust.bgm==='tile'?'auto':'cover'}!important;background-position:center!important;background-attachment:fixed!important}`;
+  if(cust.out){const w=cust.ow||12;c+=`.card,.hubtile,.addr{border:${w}px solid transparent!important;border-image:url("${cust.out}") 33.333% / ${w}px round!important;border-radius:0!important}`}
+  if(cust.css)c+=cust.css;
+  document.getElementById('cust').textContent=c;
+}
+const thin=(p,d)=>p.filter((q,i)=>i===0||i===p.length-1||Math.hypot(q.x-p[i-1].x,q.y-p[i-1].y)>=d);
+const area=p=>p.reduce((a,q,i)=>{const n=p[(i+1)%p.length];return a+(q.x*n.y-n.x*q.y)},0);
+function strokePolys(pts,w){
+  const r=w/2,out=[];
+  pts.forEach(c=>{const p=[];for(let i=0;i<14;i++){const a=i/14*2*Math.PI;p.push({x:c.x+r*Math.cos(a),y:c.y+r*Math.sin(a)})}out.push(p)});
+  for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i],dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,nx=-dy/l*r,ny=dx/l*r;out.push([{x:a.x+nx,y:a.y+ny},{x:b.x+nx,y:b.y+ny},{x:b.x-nx,y:b.y-ny},{x:a.x-nx,y:a.y-ny}])}
+  return out.map(p=>area(p)<0?p.reverse():p);
+}
+const CHARS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?'-:;()";
+function buildFont(){
+  const op=window.opentype;if(!op)return null;
+  const W=cust.fw||80,gs=[new op.Glyph({name:'.notdef',unicode:0,advanceWidth:500,path:new op.Path()}),new op.Glyph({name:'space',unicode:32,advanceWidth:300,path:new op.Path()})];
+  const has=c=>cust.glyphs[c]&&cust.glyphs[c].length;
+  [...CHARS].forEach(ch=>{
+    const src=has(ch)?ch:(has(ch.toUpperCase())?ch.toUpperCase():null);if(!src)return;
+    const st=cust.glyphs[src];let mn=1e9,mx=-1e9;
+    st.forEach(s=>s.p.forEach(([x])=>{mn=Math.min(mn,x);mx=Math.max(mx,x)}));
+    const ox=W/2+50-mn*1000,path=new op.Path();
+    st.forEach(s=>strokePolys(thin(s.p.map(([x,y])=>({x:x*1000+ox,y:(0.78-y)*1000})),8),W).forEach(poly=>{poly.forEach((q,i)=>i?path.lineTo(q.x,q.y):path.moveTo(q.x,q.y));path.close()}));
+    gs.push(new op.Glyph({name:'g'+ch.charCodeAt(0),unicode:ch.charCodeAt(0),advanceWidth:Math.round((mx-mn)*1000+W+100),path}));
+  });
+  return new op.Font({familyName:'NookCustom',styleName:'Regular',unitsPerEm:1000,ascender:780,descender:-220,glyphs:gs});
+}
+async function applyFont(){
+  const f=buildFont();if(!f)return false;
+  const ff=new FontFace('NookCustom',f.toArrayBuffer());await ff.load();
+  if(curFace)document.fonts.delete(curFace);document.fonts.add(ff);curFace=ff;return true;
+}
+applyCust();
+if(ui.font==='custom'&&Object.keys(cust.glyphs).length)applyFont().catch(()=>{});
+const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src});
+const fit=(img,W,H)=>{const t=document.createElement('canvas');t.width=W;t.height=H;const c=t.getContext('2d'),k=Math.max(W/img.width,H/img.height),w=img.width*k,h=img.height*k;c.drawImage(img,(W-w)/2,(H-h)/2,w,h);return t};
+function mkPad(cv,o,strokes){
+  const W=cv.width,H=cv.height,ctx=cv.getContext('2d');let cur=null;
+  const paint=(c,g)=>{
+    c.clearRect(0,0,W,H);if(g&&o.under)o.under(c);if(o.base)c.drawImage(o.base,0,0,W,H);
+    strokes.forEach(s=>{const lw=(s.w||o.fw())*W;c.strokeStyle=c.fillStyle=s.c||'#111';c.lineWidth=lw;c.lineCap=c.lineJoin='round';c.beginPath();
+      if(s.p.length===1){c.arc(s.p[0][0]*W,s.p[0][1]*H,lw/2,0,7);c.fill()}else{s.p.forEach(([x,y],i)=>i?c.lineTo(x*W,y*H):c.moveTo(x*W,y*H));c.stroke()}});
+    if(g&&o.over)o.over(c)};
+  const pt=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]};
+  cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);const g=o.get?o.get():{};cur={c:g.c,w:g.w,p:[pt(e)]};strokes.push(cur);paint(ctx,true)};
+  cv.onpointermove=e=>{if(cur){cur.p.push(pt(e));paint(ctx,true)}};
+  cv.onpointerup=cv.onpointercancel=()=>{if(cur){cur=null;if(o.change)o.change()}};
+  const p={paint:()=>paint(ctx,true),
+    undo:()=>{strokes.pop();p.paint();if(o.change)o.change()},
+    clear:()=>{strokes.length=0;p.paint();if(o.change)o.change()},
+    out:(t,q)=>{const k=document.createElement('canvas');k.width=W;k.height=H;paint(k.getContext('2d'),false);return k.toDataURL(t,q)}};
+  p.paint();return p;
+}
+const friendsOf=u=>friends.filter(f=>f.a===u).map(f=>f.b);
+const pair=(a,b)=>[a,b].sort().join('_');
+const avIn=(n,p)=>okImg(p.pfp)?`<img src="${p.pfp}" alt="">`:esc(p.emoji||(n[0]||'?').toUpperCase());
+const av=n=>{const p=profs[n]||{};return `<div class="av" style="background:${p.color||col(n)}">${avIn(n,p)}</div>`};
+async function hash(pw,salt){
+  const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);
+  return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:150000,hash:'SHA-256'},k,256));
+}
+function authUI(){
+  $('auth').hidden=!!me;
+  $('who').innerHTML=me?`@${esc(me)}`:'';
+  if(me)$('meav').outerHTML=`<div class="av" id="meav" style="background:${col(me)}">${esc(me[0].toUpperCase())}</div>`;
+}
+function setMode(m){
+  mode=m;const su=m==='signup',cl=m==='claim';
+  $('at').textContent=cl?'Choose a username':su?'Create your account':'Log in';
+  $('ab').textContent=cl?'Save username':su?'Sign up':'Log in';
+  $('sw').textContent=su?'Have an account? Log in':'New here? Sign up';
+  $('u').hidden=!(su||cl);$('em').hidden=cl;$('p').hidden=cl;$('sw').hidden=cl;$('oa').hidden=cl;
+  $('p').autocomplete=su?'new-password':'current-password';$('er').textContent='';$('rules').hidden=!su;
+}
+const postCard=p=>{
+  const pl=likes.filter(l=>l.post===p.id),liked=!!me&&pl.some(l=>l.by===me),pc=cms.filter(c=>c.post===p.id);
+  return `<article class="card"><div class="row">${av(p.by)}<div style="flex:1;min-width:0">
+    <div><button class="who" data-user="${esc(p.by)}">${esc(p.by)}</button>${tag(p.by)}<span class="when">${ago(p.at)}</span><span class="chip">${esc(AREAS[p.area||'general']||'General')}</span></div>
+    <div class="txt">${esc(p.text||'')}</div>${pic(p.img)}${vid(p.vid)}
+    <div class="acts">
+      <button data-like="${esc(p.id)}" class="${liked?'liked':''}" aria-pressed="${liked}"><span class="hrt${justLiked===p.id?' pop':''}">${liked?'♥':'♡'}</span> ${pl.length}</button>
+      <button data-cm="${esc(p.id)}">Comment ${pc.length}</button>
+      ${me&&(p.by===me||isAdmin())?`<button data-del="${esc(p.id)}">Delete</button>`:''}
+    </div>
+    ${open[p.id]?`<div class="cm">${pc.map(c=>`<p><b>${esc(c.by)}</b>${tag(c.by)} ${esc(c.text)}${me&&(c.by===me||isAdmin())?`<button class="x2" data-delcm="${esc(c.id)}" aria-label="Delete comment">×</button>`:''}</p>`).join('')}
+      ${me?`<form data-form="${esc(p.id)}"><input maxlength="140" placeholder="Add a comment" aria-label="Add a comment"><button>Send</button></form>`:'<p>Log in to comment.</p>'}</div>`:''}
+  </div></div></article>`};
+const empty=t=>`<div class="empty">${t}</div>`;
+function rHub(){
+  const d={feed:'See what everyone is posting',friends:me?friendsOf(me).length+' friends':'Find people you know',dms:'Chat with friends',profile:'Your page and posts',settings:'Theme and account',custom:'Draw fonts, backgrounds and borders',groups:'Public and private groups',shop:'Buy and sell app designs',events:'Join events and earn rewards',leaderboard:'See who is on top',admin:'Users, coins, shop, announcements'};
+  return `<h2 class="h" style="margin:4px 2px 12px">${me?'Hi, @'+esc(me):'Where to?'}</h2><div class="hub">${TABS.filter(t=>t[0]!=='home'&&!(ui.hide||[]).includes(t[0])&&(t[0]!=='admin'||isAdmin())).map(([k,v])=>`<button class="hubtile${opened.includes(k)?' on':''}" data-tab="${k}"><b>${esc(tn(k))}</b><span>${d[k]}${opened.includes(k)?' (open)':''}</span></button>`).join('')}</div>`;
+}
+function rFeed(){
+  let l=posts.filter(p=>cur==='all'||(p.area||'general')===cur);
+  if(sort==='top')l=[...l].sort((a,b)=>likes.filter(x=>x.post===b.id).length-likes.filter(x=>x.post===a.id).length||b.at-a.at);
+  return l.length?l.map(postCard).join(''):empty('Nothing in '+(cur==='all'?'any area':AREAS[cur])+' yet. '+(me?'Write the first post above.':'Sign up to write the first post.'));
+}
+function rFriends(){
+  const fl=friendsOf(me),fp=posts.filter(p=>fl.includes(p.by));
+  return `<div class="card"><h2 class="h">Your friends</h2>${fl.length?fl.map(u=>`<div class="item">${av(u)}<button class="who" data-user="${u}">@${u}</button><span style="flex:1"></span><button data-dm="${u}">Message</button><button data-unf="${u}">Remove</button></div>`).join(''):'<p class="empty">No friends yet. Add someone by username above.</p>'}</div>`+(fp.length?'<h2 class="h" style="margin:16px 2px 8px">Friends’ posts</h2>'+fp.map(postCard).join(''):'');
+}
+function rDms(){
+  const mine=dms.filter(m=>m.from===me||m.to===me);
+  if(!chat){
+    const last={};[...mine].sort((a,b)=>a.at-b.at).forEach(m=>last[m.from===me?m.to:m.from]=m);
+    const us=Object.keys(last).sort((a,b)=>last[b].at-last[a].at);
+    return `<div class="card"><h2 class="h">Messages</h2>${us.length?us.map(u=>`<button class="item" data-chat="${u}">${av(u)}<span style="min-width:0"><b>@${u}</b><br><span class="count">${esc(last[u].text?last[u].text.slice(0,50):(last[u].vid?'Video':'Photo'))}</span></span></button>`).join(''):'<p class="empty">No chats yet. Tap Message on a friend or a profile to start one.</p>'}</div>`;
+  }
+  const th=mine.filter(m=>m.pair===pair(me,chat)).sort((a,b)=>a.at-b.at);
+  return `<div class="card"><div class="item"><button data-back>← Chats</button><button class="who" data-user="${chat}">@${chat}</button></div><div class="thread">${th.length?th.map(m=>`<div class="msg${m.from===me?' me':''}${Date.now()-m.at<1500?' fresh':''}">${pic(m.img)}${vid(m.vid)}${esc(m.text||'')}</div>`).join(''):'<p class="empty">Say hi.</p>'}</div><small class="n">Only you and @${esc(chat)} can read this chat.</small></div>`;
+}
+function rProfile(){
+  const u=vu||me,pr=profs[u]||{},bio=pr.bio||'',ps=posts.filter(p=>p.by===u),isF=friendsOf(me).includes(u);
+  if(vp){const p=posts.find(x=>x.id===vp);return `<button class="pill" data-vpback style="margin-bottom:10px">← Back</button>`+(p?postCard(p):empty('That post is gone.'))}
+  const got=ps.reduce((n,p)=>n+likes.filter(l=>l.post===p.id).length,0);
+  const tile=p=>`<button class="tile2" style="background:${okImg(p.img)?`url('${p.img}') center/cover`:col(p.id)}" data-vp="${esc(p.id)}"><span class="t">${p.vid?'▶ ':''}${okImg(p.img)?'':esc(p.text)}</span><span>♥ ${likes.filter(l=>l.post===p.id).length}</span></button>`;
+  const list=ptab==='liked'?posts.filter(p=>likes.some(l=>l.post===p.id&&l.by===u)):ps;
+  return `<div class="card ph"${pr.bn?` style="background:linear-gradient(180deg,${esc(pr.bn)} 0,var(--card) 110px)"`:''}><div class="av bigav" style="background:${pr.color||col(u)}">${avIn(u,pr)}</div><div class="who" style="font-size:20px">${esc(pr.name||'@'+u)} ${tag(u)}</div>${pr.name?`<div class="count">@${esc(u)}</div>`:''}
+  <div class="stats"><div><b>${friendsOf(u).length}</b><span>Following</span></div><div><b>${friends.filter(f=>f.b===u).length}</b><span>Followers</span></div><div><b>${got}</b><span>Likes</span></div><div><b>${hypes.filter(h=>h.to===u).length}</b><span>Hypes</span></div><div><b>${coins(u)}</b><span>Coins</span></div></div>${u===me?'<small class="n">Earn 1 coin per 5 likes and 1 per new follower. Hype costs 10.</small>':''}
+  <div class="pbtns" id="pact">${u===me?'<button class="pill" data-editbio>Edit profile</button>':`<button class="${isF?'pill':'post-btn'}" ${isF?'data-unf':'data-addf'}="${esc(u)}">${isF?'Following':'Follow'}</button><button class="pill" data-dm="${esc(u)}">Message</button>${hbtn(u)}${isAdmin()?`<button class="danger" data-rmuser="${esc(u)}">${armU===u?'Tap again to remove account':'Remove account'}</button>`:''}`}</div>
+  <div class="acts" style="justify-content:center;flex-wrap:wrap;gap:6px;margin-top:10px">${badgeChips(u)}</div>
+  <p class="txt" id="bio" style="margin-top:12px">${bio?esc(bio):(u===me?'Add a bio.':'No bio yet.')}</p></div>
+  <div class="ptabs"><button data-ptab="posts" class="${ptab==='posts'?'on':''}">Posts</button><button data-ptab="liked" class="${ptab==='liked'?'on':''}">Liked</button></div>
+  ${list.length?`<div class="grid">${list.map(tile).join('')}</div>`:empty(ptab==='liked'?'No liked posts yet.':'No posts yet.')}`;
+}
+const pill=(k,v,l)=>`<button class="pill${(ui[k]||DEF[k])===v?' on':''}" data-set="${k}:${v}">${l}</button>`;
+const row=(t,c)=>`<div style="margin-bottom:14px"><div class="count" style="margin-bottom:6px">${t}</div><div class="acts" style="flex-wrap:wrap;gap:8px;align-items:center">${c}</div></div>`;
+function say(t){const f=$('fe');f.textContent=t;f.hidden=!t}
+const fmtT=t=>new Date(t).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const dur=ms=>{const m=Math.ceil(ms/6e4);return m>=1440?Math.ceil(m/1440)+'d':m>=60?Math.ceil(m/60)+'h':m+'m'};
+const timeoutOf=u=>((timeouts.find(t=>t.id===u)||{}).until)||0;
+const timedOut=()=>!!me&&timeoutOf(me)>Date.now();
+function muted(){if(!timedOut())return false;say('You’re timed out until '+fmtT(timeoutOf(me))+'.');return true}
+function coins(u){
+  const pb={};posts.forEach(p=>pb[p.id]=p.by);
+  const got=likes.filter(l=>(l.to||pb[l.post])===u&&l.by!==u).length;
+  const fol=friends.filter(f=>f.b===u&&f.a!==u).length;
+  const gr=grants.filter(g=>g.to===u).reduce((n,g)=>n+(+g.n||0),0);
+  const sold=sales.filter(x=>x.seller===u).reduce((n,x)=>n+(+x.price||0),0),bought=sales.filter(x=>x.buyer===u).reduce((n,x)=>n+(+x.price||0),0);
+  const paid=fees.filter(x=>x.by===u).reduce((n,x)=>n+(+x.n||0),0);
+  return Math.floor(got/5)+fol+gr+sold-bought-paid-10*hypes.filter(h=>h.from===u).length;
+}
+function hypeWait(u){const r=resets.find(x=>x.id===u),ra=r?r.at:0,last=Math.max(0,...hypes.filter(h=>h.from===u&&h.at>ra).map(h=>h.at));return last?Math.max(0,last+6048e5-Date.now()):0}
+const hbtn=u=>{const w=hypeWait(me),cn=coins(me),dis=w>0||cn<10||timedOut();return `<button class="post-btn" data-hype="${esc(u)}"${dis?' disabled':''}>${w>0?'Hype in '+dur(w):cn<10?'Need 10 coins':'🔥 Hype (10)'}</button>`};
+function playHype(from,force){
+  if(!force&&(ui.hype==='off'||ui.motion==='off'))return;
+  const st=ui.hstyle||'confetti',o=document.createElement('div');o.className='hype';let h='';
+  if(st==='confetti')for(let i=0;i<44;i++)h+=`<i style="left:${Math.random()*100}%;background:${PCOLORS[i%7]};animation-delay:${Math.random()*.7}s;--dx:${(Math.random()-.5)*180}px"></i>`;
+  else if(st==='fire')for(let i=0;i<14;i++)h+=`<b style="left:${4+Math.random()*88}%;animation-delay:${Math.random()*.8}s;font-size:${22+Math.random()*28}px">🔥</b>`;
+  else h='<em></em>';
+  o.innerHTML=h+`<div class="ht">🔥 ${from==='you'?'Hype preview':'@'+esc(from)+' hyped you!'}</div>`;
+  document.body.appendChild(o);setTimeout(()=>o.remove(),3300);
+}
+let hypeSeen=null;
+function detectHype(all){
+  if(!hypeSeen){hypeSeen=new Set(all.map(h=>h.id));return}
+  all.forEach(h=>{if(hypeSeen.has(h.id))return;hypeSeen.add(h.id);if(me&&h.to===me&&Date.now()-h.at<120000)playHype(h.from)});
+}
+const vid=id=>/^[A-Za-z0-9_\/.-]{5,200}$/.test(id||'')?`<video class="pic" controls playsinline preload="metadata" src="${mediaUrl(id)}"></video>`:'';
+const isAdmin=()=>!!me&&(isOwner||admins.some(a=>a.id===me));
+const tag=u=>(admins.some(a=>a.id===u)?'<span class="chip">Admin</span>':'')+awards.filter(a=>a.to===u).slice(0,3).map(a=>{const b=badges.find(x=>x.id===a.badge);return b&&okImg(b.img)?`<img class="bdg" src="${b.img}" alt="${esc(b.name)}" title="${esc(b.name)}">`:''}).join('');
+const badgeChips=u=>awards.filter(a=>a.to===u).map(a=>{const b=badges.find(x=>x.id===a.badge);return b&&okImg(b.img)?`<span class="chip"><img class="bdg" src="${b.img}" alt=""> ${esc(b.name)}</span>`:''}).join('');
+const tn=k=>(ui.names||{})[k]||(TABS.find(t=>t[0]===k)||[])[1]||k;
+const okImg=u=>/^data:image\//.test(u||'');
+const pic=u=>okImg(u)?`<img class="pic" src="${u}" alt="Shared photo">`:'';
+function showPend(){const b=$('pimg'),im=b.querySelector('img'),vd=$('pvid');b.hidden=!(pend||pendV);im.hidden=!pend;im.src=pend||'data:,';vd.hidden=!pendV;if(pendV)vd.src=mediaUrl(pendV);else vd.removeAttribute('src');$('go').disabled=!($('t').value.trim()||pend||pendV)}
+function pickMedia(o={}){return new Promise(res=>{
+  const i=document.createElement('input');i.type='file';i.accept=o.only==='image'?'image/*':'image/*,video/*';
+  i.onchange=async()=>{
+    const f=i.files[0];if(!f)return res(null);
+    if(f.type.startsWith('video/')){
+      if(f.size>19*1048576)return res({err:'That video is over 19 MB. Try a shorter clip.'});
+      try{if(!authUser)return res({err:'Log in to send video.'});say('Uploading video…');const ext=((f.name.split('.').pop()||'mp4').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,5))||'mp4',path=authUser.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;const {error}=await sb.storage.from('media').upload(path,f,{contentType:f.type});if(error)throw error;say('');return res({vid:path})}
+      catch(e){say('');return res({err:'The video upload failed. Try again.'})}
+    }
+    const url=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r('');fr.readAsDataURL(f)});
+    const im=await loadImg(url);if(!im)return res({err:'Couldn’t read that image.'});
+    if(o.sq){const c=document.createElement('canvas');c.width=c.height=o.sq;const k=Math.max(o.sq/im.width,o.sq/im.height),w=im.width*k,h=im.height*k;c.getContext('2d').drawImage(im,(o.sq-w)/2,(o.sq-h)/2,w,h);return res({img:c.toDataURL('image/jpeg',.82)})}
+    let max=800,q=.72,out='';
+    for(let n=0;n<5;n++){const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);if(out.length<170000)break;max*=.75;q-=.07}
+    res(out.length<200000?{img:out}:{err:'That image is too large.'})};
+  i.click()})}
+const isMember=(g,u)=>members.some(m=>m.g===g&&m.u===u);
+const grpOps=id=>['groups/'+id,...members.filter(m=>m.g===id).map(m=>'members/'+m.id),...gmsgs.filter(m=>m.g===id).map(m=>'gmsgs/'+m.id),...invites.filter(i=>i.g===id).map(i=>'invites/'+i.id)];
+const gitem=g=>`<button class="item" data-grp="${esc(g.id)}"><div class="av" style="background:${col(g.id)}">${esc((g.name[0]||'?').toUpperCase())}</div><span style="min-width:0;flex:1"><b>${esc(g.name)}</b> <span class="chip">${g.vis==='private'?'Private':'Public'}</span><br><span class="count">${members.filter(m=>m.g===g.id).length} members</span></span></button>`;
+function rGroups(){
+  if(gid){
+    const g=groups.find(x=>x.id===gid),back=`<button class="pill" data-gback style="margin-bottom:10px">← Groups</button>`;
+    if(!g)return back+empty('That group is gone.');
+    const isM=isMember(gid,me),isO=g.owner===me,inv=invites.some(i=>i.g===gid&&i.u===me);
+    if(g.vis==='private'&&!isM&&!inv)return back+empty('This group is private. You need an invite to see it.');
+    const mem=members.filter(m=>m.g===gid),th=gmsgs.filter(m=>m.g===gid).sort((a,b)=>a.at-b.at),id=esc(gid),tag=g.vis==='private'?'Private':'Public';
+    return back+`<div class="card"><h2 class="h">${esc(g.name)} <span class="chip">${tag}</span></h2>${g.desc?`<p class="txt">${esc(g.desc)}</p>`:''}
+    <div class="count" style="margin-bottom:6px">${mem.length} members</div>
+    <div class="acts" style="flex-wrap:wrap;gap:6px">${mem.map(m=>`<button class="pill" data-user="${esc(m.u)}">@${esc(m.u)}</button>`).join('')}</div>
+    <div class="acts" style="margin-top:12px;gap:8px;flex-wrap:wrap">${inv&&!isM?`<button class="post-btn" data-acc="${id}">Accept invite</button>`:''}${!isM&&g.vis==='public'?`<button class="post-btn" data-join="${id}">Join group</button>`:''}${isM&&!isO?`<button class="pill" data-leave="${id}">Leave</button>`:''}${(isO||isAdmin())?`<button class="pill" data-gvis="${g.vis==='private'?'public':'private'}">Make ${g.vis==='private'?'public':'private'}</button><button class="danger" data-gdel>${armed?'Tap again to delete group':'Delete group'}</button>`:''}</div></div>
+    <div class="card"><div class="thread">${th.length?th.map(m=>`<div class="msg${m.by===me?' me':''}">${m.by===me?'':`<b>${esc(m.by)}</b><br>`}${pic(m.img)}${vid(m.vid)}${esc(m.text||'')}</div>`).join(''):'<p class="empty">No messages yet.</p>'}</div>${isM?'':'<small class="n">Join to send messages.</small>'}<small class="n">Private groups are only visible to their members and invited people.</small></div>`;
+  }
+  const mine=groups.filter(g=>isMember(g.id,me)),inv=invites.filter(i=>i.u===me).map(i=>groups.find(g=>g.id===i.g)).filter(Boolean),pub=groups.filter(g=>g.vis==='public'&&!isMember(g.id,me));
+  return (inv.length?`<div class="card"><h2 class="h">Invites</h2>${inv.map(g=>`<div class="item"><button class="who" data-grp="${esc(g.id)}">${esc(g.name)}</button><span style="flex:1"></span><button data-acc="${esc(g.id)}">Accept</button><button data-dec="${esc(g.id)}">Decline</button></div>`).join('')}</div>`:'')
+   +`<div class="card"><h2 class="h">Your groups</h2>${mine.length?mine.map(gitem).join(''):'<p class="empty">You haven’t joined any groups yet.</p>'}</div><div class="card"><h2 class="h">Discover public groups</h2>${pub.length?pub.map(gitem).join(''):'<p class="empty">No public groups to join right now.</p>'}</div>`;
+}
+function changes(d){let n=0;const u=d.ui||{};
+  for(const [k,v] of Object.entries(u)){if(k==='cols'||k==='names')n+=Object.keys(v||{}).length;else if(k==='acc'){if(v)n++}else if(v!==undefined&&v!==''&&String(v)!==String(DEF[k]))n++}
+  if(d.cust&&d.cust.bg)n++;if(d.cust&&d.cust.out)n++;return n}
+function rLeaderboard(){
+  const names=new Set(Object.keys(profs));
+  posts.forEach(p=>names.add(p.by));cms.forEach(c=>names.add(c.by));likes.forEach(l=>names.add(l.by));
+  friends.forEach(f=>{names.add(f.a);names.add(f.b)});hypes.forEach(h=>{names.add(h.from);names.add(h.to)});
+  sales.forEach(x=>{names.add(x.buyer);names.add(x.seller)});grants.forEach(g=>names.add(g.to));
+  names.delete(undefined);names.delete('');
+  const pb={};posts.forEach(p=>pb[p.id]=p.by);
+  const val={coins:u=>coins(u),likes:u=>likes.filter(l=>(l.to||pb[l.post])===u&&l.by!==u).length,followers:u=>friends.filter(f=>f.b===u&&f.a!==u).length,hypes:u=>hypes.filter(h=>h.to===u).length}[lb]||(u=>0);
+  const all=[...names].map(u=>({u,v:val(u)})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v||a.u.localeCompare(b.u));
+  const medal=['🥇','🥈','🥉'],top=all.slice(0,25),mi=me?all.findIndex(r=>r.u===me):-1;
+  const line=(r,i)=>`<button class="item" data-user="${esc(r.u)}"${r.u===me?' style="background:var(--accsoft);border-radius:12px;padding-left:8px;padding-right:8px"':''}><span style="width:30px;font-weight:800;flex:none">${medal[i]||(i+1)}</span>${av(r.u)}<span style="flex:1;min-width:0"><b>@${esc(r.u)}</b>${tag(r.u)}</span><b>${r.v}</b></button>`;
+  const pills=[['coins','Coins'],['likes','Likes'],['followers','Followers'],['hypes','Hypes']].map(([k,v])=>`<button class="pill${lb===k?' on':''}" data-lb="${k}">${v}</button>`).join('');
+  return `<div class="card"><h2 class="h">Leaderboard</h2><div class="acts" style="gap:8px;flex-wrap:wrap">${pills}</div></div><div class="card">${top.length?top.map(line).join(''):'<p class="empty">No one on the board yet.</p>'}${mi>=25?`<div class="count" style="margin:8px 0 2px">Your rank</div>${line(all[mi],mi)}`:''}</div>`;
+}
+function rEvents(){
+  const now=Date.now(),list=[...events].sort((a,b)=>{const ea=a.end<=now,eb=b.end<=now;return (ea-eb)||(ea?b.start-a.start:a.start-b.start)});
+  if(!list.length)return empty('No events yet. Check back soon.');
+  return list.map(ev=>{
+    const live=ev.start<=now&&now<ev.end,over=ev.end<=now,going=!!me&&rsvps.some(r=>r.ev===ev.id&&r.u===me),n=rsvps.filter(r=>r.ev===ev.id).length,bd=badges.find(b=>b.id===ev.badge);
+    return `<div class="card"><h2 class="h">${esc(ev.title)} <span class="chip">${live?'Live now':over?'Ended':'Upcoming'}</span></h2><div class="count">${fmtT(ev.start)} to ${fmtT(ev.end)}</div>${ev.desc?`<p class="txt">${esc(ev.desc)}</p>`:''}
+    <div class="acts" style="flex-wrap:wrap;gap:6px;margin:6px 0">${ev.coins?`<span class="chip">🪙 ${ev.coins} reward</span>`:''}${bd&&okImg(bd.img)?`<span class="chip"><img class="bdg" src="${bd.img}" alt=""> ${esc(bd.name)} badge</span>`:''}<span class="count">${n} going${ev.rewarded?', rewards sent':''}</span></div>
+    ${me&&!over?`<button class="${going?'pill':'post-btn'}" data-rsvp="${esc(ev.id)}">${going?'Going (tap to leave)':'Join event'}</button>`:''}</div>`}).join('');
+}
+const COLORVARS=[['--bg','Page background'],['--card','Card background'],['--ink','Text'],['--mute','Secondary text'],['--line','Borders'],['--heart','Likes and warnings']];
+const hex6=c=>/^#[0-9a-f]{6}$/i.test(c)?c:'#888888';
+const curCol=v=>hex6(getComputedStyle(document.documentElement).getPropertyValue(v).trim());
+function styleHTML(){
+  const sl=(k,l,mn,mx,df,stp)=>`<label class="sl count">${l}<input type="range" data-sl="${k}" min="${mn}" max="${mx}" step="${stp||1}" value="${ui[k]!==undefined?ui[k]:df}"></label>`;
+  return `<div class="card"><h2 class="h">Colors</h2><p class="count">Applies to light and dark. Each changed color adds 1 to a design’s sale fee.</p>
+  <label class="crow"><span>Accent</span><input type="color" id="ac2" value="${hex6(ui.acc||'#4f46e5')}"></label>
+  ${COLORVARS.map(([v,l])=>`<label class="crow"><span>${l}</span><input type="color" data-cv="${v}" value="${curCol(v)}"></label>`).join('')}
+  <button class="pill" data-resetcols>Reset colors</button></div>
+  <div class="card"><h2 class="h">Sizes</h2>${sl('rpx','Card corners',0,40,18)}${sl('padpx','Card padding',6,28,14)}${sl('gappx','Space between cards',4,24,12)}${sl('bw','Border thickness',0,4,1)}${sl('hs','Heading size',0.8,1.6,1,0.1)}</div>
+  <div class="card"><h2 class="h">Buttons and tabs</h2>${row('Buttons',pill('bs','filled','Filled')+pill('bs','soft','Soft')+pill('bs','outline','Outline'))}${row('Tabs',pill('tb','box','Box')+pill('tb','line','Underline')+pill('tb','pill','Pills'))}</div>
+  <div class="card"><h2 class="h">Names</h2><p class="count" style="margin-bottom:8px">Rename the app and its tabs. Names show after you switch tabs.</p><input class="nmi" data-nm="appn" placeholder="App name" maxlength="20" value="${esc(ui.appn||'')}">${TABS.filter(t=>t[0]!=='home'&&(t[0]!=='admin'||isAdmin())).map(([k,v])=>`<input class="nmi" data-nm="tab:${k}" placeholder="${v}" maxlength="16" value="${esc((ui.names||{})[k]||'')}" aria-label="Rename ${v}">`).join('')}</div>
+  <div class="card"><h2 class="h">Custom CSS</h2><textarea id="ccss" spellcheck="false" placeholder=".card { }" style="border:1px solid var(--line);border-radius:12px;padding:10px;min-height:110px;font:13px ui-monospace,Menlo,monospace"></textarea><div class="acts" style="margin-top:8px;gap:8px"><button class="post-btn" id="capply">Apply</button><button class="pill" id="cclr">Clear</button></div><small class="n">Only you see this. It isn’t included in designs you sell.</small></div><p class="count" id="cst" role="status"></p>`;
+}
+const owned=id=>sales.some(x=>x.design===id&&x.buyer===me);
+const snapLook=()=>{const u={...ui};['hide','hype','hstyle','coins'].forEach(k=>delete u[k]);return {ui:u,cust:{glyphs:cust.glyphs,fw:cust.fw,bg:cust.bg,bgm:cust.bgm,out:cust.out,ow:cust.ow}}};
+const tagsOf=d=>{const t=[];if(d.ui.font==='custom'&&Object.values(d.cust.glyphs||{}).some(a=>a.length))t.push('Font');if(d.cust.bg)t.push('Background');if(d.cust.out)t.push('Outline');t.push('Theme');return t};
+async function mkThumb(){const src=cust.bg||cust.out;if(!src)return '';const im=await loadImg(src);if(!im)return '';const c=document.createElement('canvas');c.width=72;c.height=cust.bg?128:72;c.getContext('2d').drawImage(im,0,0,c.width,c.height);return c.toDataURL(cust.bg?'image/jpeg':'image/png',.6)}
+function stashLook(){prevLook={ui:JSON.parse(JSON.stringify(ui)),cust:JSON.parse(JSON.stringify(cust))};try{localStorage.setItem('nook-prev',JSON.stringify(prevLook))}catch(e){}}
+async function applyDesign(data){
+  stashLook();const keepCss=cust.css;ui={...data.ui};cust={glyphs:{},fw:80,...(data.cust||{}),css:keepCss};saveUI();saveCust();applyUI();applyCust();
+  if(ui.font==='custom'&&Object.values(cust.glyphs||{}).some(a=>a.length))try{await applyFont()}catch(e){}
+}
+function desCard(x){
+  const mine=x.seller===me,own=owned(x.id),n=sales.filter(y=>y.design===x.id).length,id=esc(x.id),cn=coins(me);
+  return `<div class="card"><div class="row">${x.thumb?`<img class="thumb" src="${x.thumb}" alt="">`:`<div class="av" style="background:${esc(x.acc||col(x.id))};border-radius:12px;flex:none"></div>`}<div style="flex:1;min-width:0"><b>${esc(x.name)}</b> <span class="chip">${x.price?'🪙 '+x.price:'Free'}</span>${x.active===false?' <span class="chip">Hidden</span>':''}<div class="count">by <button class="who" data-user="${esc(x.seller)}">@${esc(x.seller)}</button>, ${n} sold</div>${x.desc?`<p class="txt">${esc(x.desc)}</p>`:''}<div class="count">${(x.tags||[]).map(esc).join(', ')}</div></div></div>
+  <div class="acts" style="margin-top:8px;gap:8px;flex-wrap:wrap">${mine||own?`<button class="post-btn" data-usedes="${id}">Use</button>`:`<button class="post-btn" data-buy="${id}"${cn<x.price?' disabled':''}>${cn<x.price?'Need '+x.price+' coins':(x.price?'Buy for '+x.price:'Get free')}</button>`}${mine?(x.active===false?`<button class="pill" data-relist="${id}">List again</button>`:`<button class="pill" data-delist="${id}">Remove from shop</button>`):''}${isAdmin()&&!mine?`<button class="danger" data-shopdel="${id}">Delete</button>`:''}</div></div>`;
+}
+function rShop(){
+  const items=shop.filter(x=>x.active!==false||x.seller===me).sort((a,b)=>b.at-a.at);
+  const mineBought=sales.filter(x=>x.buyer===me&&!shop.some(y=>y.id===x.design));
+  return `<div class="card"><h2 class="h">Design shop</h2><p class="count">Balance: 🪙 ${coins(me)}. Sell your look for coins, or buy someone else’s.</p><div class="acts" style="margin-top:8px"><button class="pill" data-undodes>Undo last design</button></div></div>`
+   +(mineBought.length?`<div class="card"><h2 class="h">Bought, no longer listed</h2>${mineBought.map(x=>`<div class="item"><b>${esc(x.name)}</b><span style="flex:1"></span><button data-usedes="${esc(x.design)}">Use</button></div>`).join('')}</div>`:'')
+   +(items.length?items.map(desCard).join(''):empty('No designs yet. Make a look in Customize, then list it above.'));
+}
+const stat=(n,l)=>`<div><b>${n}</b><span>${l}</span></div>`;
+function rAdmin(){
+  if(!isAdmin())return empty('Admins only.');
+  const us=accts.map(a=>a.id).sort();
+  const row=u=>{const tu=timeoutOf(u),ad=admins.some(a=>a.id===u),q=(k,l,v)=>`<button class="pill" data-act="${k}:${u}${v!==undefined?':'+v:''}">${l}</button>`;
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><div class="row" style="align-items:center">${av(u)}<div style="flex:1;min-width:0"><button class="who" data-user="${u}">@${u}</button>${tag(u)}${tu>Date.now()?' <span class="chip">Timed out</span>':''}<div class="count">🪙 ${coins(u)}, ${hypes.filter(h=>h.to===u).length} hypes${hypeWait(u)>0?', hype in '+dur(hypeWait(u)):''}</div></div></div>
+    <div class="acts" style="flex-wrap:wrap;gap:6px;margin-top:8px">${q('give','+10',10)}${q('give','+50',50)}${q('give','+100',100)}${q('give','−10',-10)}${q('bdgs','Badges')}${q('reset','Reset hype')}${q('timeout','Timeout 1h',60)}${q('timeout','1 day',1440)}${tu>Date.now()?q('lift','Lift'):''}${u===me?'':q('admin',ad?'Remove admin':'Make admin')}${u===me?'':`<button class="danger" data-act="remove:${u}">${armU===u?'Tap again to remove':'Remove'}</button>`}</div>${badgeFor===u?`<div class="acts" style="flex-wrap:wrap;gap:6px;margin-top:8px">${badges.length?badges.map(b=>{const has=awards.some(a=>a.badge===b.id&&a.to===u);return `<button class="pill${has?' on':''}" data-aw="${esc(b.id)}:${u}">${okImg(b.img)?`<img class="bdg" src="${b.img}" alt="">`:''} ${esc(b.name)}</button>`}).join(''):'<span class="count">Draw a badge first.</span>'}</div>`:''}</div>`};
+  return `<div class="card"><h2 class="h">Overview</h2><div class="stats">${stat(us.length,'Users')}${stat(posts.length,'Posts')}${stat(groups.length,'Groups')}${stat(shop.filter(x=>x.active!==false).length,'Designs')}${stat(hypes.length,'Hypes')}${stat(us.reduce((n,u)=>n+coins(u),0),'Coins')}</div><small class="n">Coins, timeouts, badges, events, and the admin list can only be changed by the owner account. “Remove” deletes a user’s content; to fully block a login, delete them in the Supabase dashboard.</small></div>
+  <div class="card"><h2 class="h">Users</h2>${us.length?us.map(row).join(''):'<p class="empty">Loading users…</p>'}</div>
+  <div class="card"><h2 class="h">Badges</h2>${badges.length?badges.map(b=>`<div class="item">${okImg(b.img)?`<img class="bdg" style="width:32px;height:32px" src="${b.img}" alt="">`:''}<b>${esc(b.name)}</b><span class="count">${awards.filter(a=>a.badge===b.id).length} given</span><span style="flex:1"></span><button class="danger" data-bdel="${esc(b.id)}">Delete</button></div>`).join(''):'<p class="empty">Draw a badge above, then hand it out from the user list.</p>'}</div>
+  <div class="card"><h2 class="h">Events</h2>${events.length?events.map(ev=>`<div class="item"><span style="min-width:0;flex:1"><b>${esc(ev.title)}</b><br><span class="count">${fmtT(ev.start)}, ${rsvps.filter(r=>r.ev===ev.id).length} going${ev.rewarded?', rewards sent':''}</span></span>${(ev.coins||ev.badge)&&!ev.rewarded?`<button data-evrw="${esc(ev.id)}">Reward</button>`:''}<button class="danger" data-evdel="${esc(ev.id)}">Delete</button></div>`).join(''):'<p class="empty">No events yet. Create one above.</p>'}</div>
+  <div class="card"><h2 class="h">Shop listings</h2>${shop.length?shop.map(x=>`<div class="item"><span style="min-width:0;flex:1"><b>${esc(x.name)}</b> <span class="count">by @${esc(x.seller)}, 🪙 ${x.price}${x.active===false?', hidden':''}</span></span><button class="danger" data-shopdel="${esc(x.id)}">Delete</button></div>`).join(''):'<p class="empty">No listings.</p>'}</div>`;
+}
+function rSettings(){
+  const th=['system','light','dark'].map(t=>`<button class="pill${theme===t?' on':''}" data-theme="${t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('');
+  const ac=PCOLORS.map(c=>`<button class="dot${ui.acc===c?' on':''}" style="background:${c}" data-set="acc:${c}" aria-label="Accent ${c}"></button>`).join('')+`<input type="color" id="ac" value="${ui.acc||'#4f46e5'}" aria-label="Custom accent color">`;
+  return `<div class="card"><h2 class="h">Appearance</h2>
+  ${row('Theme',th)}${row('Accent color',ac)}
+  ${row('Background',pill('bg','soft','Soft')+pill('bg','tint','Tinted')+pill('bg','pure','Plain'))}
+  ${row('Font',pill('font','modern','Modern')+pill('font','classic','Classic')+pill('font','round','Rounded')+pill('font','mono','Mono'))}
+  ${row('Size',pill('fs','0.9','Small')+pill('fs','1','Normal')+pill('fs','1.15','Large')+pill('fs','1.3','Huge'))}
+  ${row('Corners',pill('r','sharp','Sharp')+pill('r','round','Round')+pill('r','pill','Extra round'))}
+  ${row('Spacing',pill('den','cozy','Cozy')+pill('den','compact','Compact'))}
+  ${row('Avatars',pill('av','circle','Circle')+pill('av','round','Rounded')+pill('av','square','Square'))}
+  ${row('Cards',pill('cs','flat','Flat')+pill('cs','shadow','Shadow')+pill('cs','glass','Glass'))}
+  ${row('Page width',pill('w','narrow','Narrow')+pill('w','normal','Normal')+pill('w','wide','Wide'))}
+  ${row('Line spacing',pill('lh','tight','Tight')+pill('lh','normal','Normal')+pill('lh','airy','Airy'))}
+  ${row('Profile grid',pill('gc','2','2 columns')+pill('gc','3','3 columns')+pill('gc','4','4 columns'))}
+  ${row('Timestamps',pill('ts','on','Show')+pill('ts','off','Hide'))}
+  ${row('Animations',pill('motion','on','On')+pill('motion','off','Off'))}
+  ${row('Hype animation',pill('hype','on','On')+pill('hype','off','Off')+'<button class="pill" data-hprev>Preview</button>')}
+  ${row('Hype style',pill('hstyle','confetti','Confetti')+pill('hstyle','fire','Fire')+pill('hstyle','glow','Glow'))}
+  ${row('Coins in header',pill('coins','on','Show')+pill('coins','off','Hide'))}
+  ${row('Home tiles (tap to hide or show)',TABS.filter(t=>!['home','settings','admin'].includes(t[0])).map(([k,v])=>`<button class="pill${(ui.hide||[]).includes(k)?'':' on'}" data-hide="${k}">${v}</button>`).join(''))}
+  <button class="pill" data-reset>Reset appearance</button></div>`+(me?`<div class="card"><h2 class="h">Account</h2><p class="txt">Signed in as @${esc(me)}${isAdmin()?' (admin)':''}</p><div class="acts"><button data-out>Log out</button><button class="danger" data-delacc>${armed?'Tap again to delete everything':'Delete my account'}</button></div>${armed?'<small class="n">This removes your account, posts, comments, likes, friends, and messages you sent.</small>':''}</div>`:'');
+}
+function rCustom(){
+  const sub=[['font','Font'],['bg','Background'],['out','Outline'],['style','Style']].map(([k,v])=>`<button class="pill${ctab===k?' on':''}" data-ctab="${k}">${v}</button>`).join('');
+  const nav3=`<div class="card"><h2 class="h">Customize</h2><div class="acts" style="gap:8px;flex-wrap:wrap">${sub}</div><p class="count" style="margin-top:8px">Saved on this device only.</p></div>`;
+  if(ctab==='font')return nav3+`<div class="card"><h2 class="h">Draw your font</h2><p class="count" style="margin-bottom:8px">Tap a character and draw it. Capitals stand in for any lowercase letters you skip.</p>
+  <div class="chars">${[...CHARS].map(c=>`<button data-gl="${esc(c)}" class="${(cust.glyphs[c]||[]).length?'on ':''}${c===gch?'cur':''}" aria-label="Draw ${esc(c)}">${esc(c)}</button>`).join('')}</div>
+  <canvas class="cvs" id="cv" width="300" height="300"></canvas>
+  <div class="acts" style="gap:8px"><button class="pill" id="undo">Undo</button><button class="pill" id="clr">Clear letter</button><label class="count">Weight <input type="range" id="fw" min="40" max="140" step="5" value="${cust.fw||80}"></label></div>
+  <div class="acts" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="post-btn" id="applyf">Use my font</button><button class="pill" id="rmf">Back to default</button></div>
+  <p class="count" id="cst" role="status" style="min-height:20px;margin-top:8px"></p>
+  <p class="txt" style="font-family:NookCustom,system-ui,sans-serif;font-size:24px">The quick brown fox 0123</p></div>`;
+  if(ctab==='style')return nav3+styleHTML();
+  const isBg=ctab==='bg';
+  return nav3+`<div class="card"><h2 class="h">${isBg?'Draw or import a background':'Draw or import an outline'}</h2><p class="count">${isBg?'Draw on the canvas or import a photo, then save it.':'This frame goes around every card. Draw in the outer ring; the grey middle is ignored.'}</p>
+  <canvas class="cvs chk" id="cv" width="${isBg?405:180}" height="${isBg?720:180}" style="max-width:${isBg?220:280}px"></canvas>
+  <div class="acts" style="gap:8px;flex-wrap:wrap;align-items:center"><input type="color" id="bc" value="#4f46e5" aria-label="Brush color"><input type="range" id="bs" min="2" max="40" value="${isBg?14:8}" aria-label="Brush size"><button class="pill" id="undo">Undo</button><button class="pill" id="clr">Clear</button></div>
+  <div class="acts" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="pill" id="impb">Import image</button><input type="file" id="imp" accept="image/*" hidden><button class="post-btn" id="savec">Save</button><button class="pill" id="rmv">Remove</button></div>
+  ${isBg?`<div class="acts" style="margin-top:12px;gap:8px"><button class="pill${cust.bgm==='tile'?'':' on'}" id="m1">Fill screen</button><button class="pill${cust.bgm==='tile'?' on':''}" id="m2">Tile</button></div>`:`<label class="count" style="display:block;margin-top:12px">Border width <input type="range" id="ow" min="6" max="24" step="2" value="${cust.ow||12}"></label>`}
+  <p class="count" id="cst" role="status" style="min-height:20px;margin-top:8px"></p></div>`;
+}
+async function mountCustom(){
+  const cv=$('cv'),say=t=>{const e=$('cst');if(e)e.textContent=t};
+  if(ctab==='style'){const ta=$('ccss');ta.value=cust.css||'';$('capply').onclick=()=>{cust.css=ta.value;saveCust();applyCust();say('Applied.')};$('cclr').onclick=()=>{ta.value='';delete cust.css;saveCust();applyCust();say('Cleared.')};return}
+  if(!cv)return;
+  if(ctab==='font'){
+    const arr=cust.glyphs[gch]=cust.glyphs[gch]||[];
+    const pad=mkPad(cv,{fw:()=>(cust.fw||80)/1000,
+      under:c=>{c.strokeStyle='#c9cbe0';c.lineWidth=1;c.setLineDash([4,4]);[0.12,0.33,0.78].forEach(y=>{c.beginPath();c.moveTo(0,y*300);c.lineTo(300,y*300);c.stroke()});c.setLineDash([])},
+      change:()=>{saveCust();document.querySelectorAll('[data-gl]').forEach(b=>b.classList.toggle('on',(cust.glyphs[b.dataset.gl]||[]).length>0))}},arr);
+    $('undo').onclick=pad.undo;$('clr').onclick=pad.clear;
+    $('fw').oninput=e=>{cust.fw=+e.target.value;saveCust();pad.paint()};
+    $('applyf').onclick=async()=>{
+      if(!window.opentype){say('Font tools didn’t load. Check your connection and reload.');return}
+      if(!Object.values(cust.glyphs).some(a=>a.length)){say('Draw at least one character first.');return}
+      try{await applyFont();ui.font='custom';saveUI();applyUI();say('Your font is on.')}catch(e){say('Couldn’t build the font. Try fewer strokes.')}
+    };
+    $('rmf').onclick=()=>{ui.font='modern';saveUI();applyUI();say('Back to the default font.')};
+    return;
+  }
+  const isBg=ctab==='bg',key=isBg?'bg':'out',W=cv.width,H=cv.height,o={base:null,fw:()=>0.02,
+    get:()=>({c:$('bc').value,w:(+$('bs').value)/W}),
+    under:isBg?null:c=>{c.fillStyle='rgba(120,120,140,.28)';c.fillRect(W/3,H/3,W/3,H/3)}};
+  const pad=mkPad(cv,o,[]);
+  if(cust[key]){const im=await loadImg(cust[key]);if(im&&$('cv')===cv){o.base=im;pad.paint()}}
+  $('undo').onclick=pad.undo;$('clr').onclick=pad.clear;
+  $('impb').onclick=()=>$('imp').click();
+  $('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;const im=await loadImg(await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r('');fr.readAsDataURL(f)}));if(!im){say('Couldn’t read that image.');return}o.base=fit(im,W,H);pad.paint();say('Imported. Add drawing if you like, then save.')};
+  $('savec').onclick=()=>{
+    const old=cust[key];cust[key]=pad.out(o.base&&isBg?'image/jpeg':'image/png',0.8);
+    if(!saveCust()){cust[key]=old;say('Too big to save on this device. Try a smaller image.');return}
+    applyCust();say('Saved.')};
+  $('rmv').onclick=()=>{delete cust[key];saveCust();applyCust();o.base=null;pad.clear();say('Removed.')};
+  if(isBg){$('m1').onclick=()=>{cust.bgm='fill';saveCust();applyCust();$('m1').classList.add('on');$('m2').classList.remove('on')};$('m2').onclick=()=>{cust.bgm='tile';saveCust();applyCust();$('m2').classList.add('on');$('m1').classList.remove('on')}}
+  else $('ow').oninput=e=>{cust.ow=+e.target.value;saveCust();applyCust()};
+}
+function editHTML(){const pr=profs[me]||{};return `<div class="ef" style="text-align:left"><h2 class="h">Edit profile</h2>
+<div class="acts" style="gap:12px;align-items:center;margin-bottom:10px"><div id="pfpv" class="av bigav" style="margin:0;flex:none;background:${pr.color||col(me)}">${avIn(me,{...pr,pfp:ppic})}</div><button type="button" class="pill" data-pfp>Change photo</button><button type="button" class="pill" data-pfprm>Remove photo</button></div>
+<input id="en" placeholder="Display name" maxlength="24" value="${esc(pr.name||'')}">
+<input id="ee" placeholder="Avatar emoji (optional)" maxlength="4" value="${esc(pr.emoji||'')}">
+<div class="acts" style="margin:6px 0 10px;flex-wrap:wrap;gap:8px"><button class="pill${pcol?'':' on'}" data-pc="">Auto</button>${PCOLORS.map(c=>`<button class="dot${pcol===c?' on':''}" style="background:${c}" data-pc="${c}" aria-label="Avatar color ${c}"></button>`).join('')}</div>
+<div class="count">Banner color</div><div class="acts" style="margin:6px 0 10px;flex-wrap:wrap;gap:8px"><button type="button" class="pill${pbn?'':' on'}" data-pb="">None</button>${PCOLORS.map(c=>`<button type="button" class="dot${pbn===c?' on':''}" style="background:${c}" data-pb="${c}" aria-label="Banner color ${c}"></button>`).join('')}</div>
+<textarea id="bt" maxlength="160" placeholder="Tell people about you">${esc(pr.bio||'')}</textarea>
+<div class="acts" style="margin-top:8px"><button class="post-btn" data-savebio>Save</button><button class="pill" data-cancelbio>Cancel</button></div></div>`}
+function render(){
+  if(editing)return;
+  if(opened.includes('admin')&&!isAdmin()){opened=opened.filter(x=>x!=='admin');if(tab==='admin')tab='home'}
+  $('who').innerHTML=me?`@${esc(me)}${(ui.coins||'on')==='on'?` <span class="chip">🪙 ${coins(me)}</span>`:''}`:'';
+  const tu=timeoutOf(me),tmo=!!me&&tu>Date.now();$('tob').hidden=!tmo;
+  if(tmo){$('tob').textContent='You’re timed out until '+fmtT(tu)+'. You can read, but not post or react.';clearTimeout(ttm);ttm=setTimeout(render,tu-Date.now()+500)}
+  if(tab==='admin'&&isAdmin()&&!accSub&&db){accSub=true;db.collection('accounts').onSnapshot(sn=>{accts=sn.docs.map(d=>({id:d.id,at:(d.data()||{}).at}));render()},()=>{})}
+  const an=announce.find(a=>a.id==='current');$('anb').hidden=!(an&&an.on&&an.text);$('anb').textContent=an?an.text:'';
+  $('shf').hidden=!(me&&tab==='shop');
+  if(tab==='shop'&&me){const fee=5+changes(snapLook());$('shfee').textContent='Listing fee: 5 coins plus 1 for each thing you changed ('+(fee-5)+') = '+fee+' coins.'}
+  const adm=isAdmin()&&tab==='admin';$('anf').hidden=!adm;$('bdg').hidden=!adm;$('evf').hidden=!adm;
+  if(adm){const bs=$('eb');if(bs.options.length!==badges.length+1){const bv=bs.value;bs.innerHTML='<option value="">No badge reward</option>'+badges.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');bs.value=bv}}
+  $('admp').hidden=!(isAdmin()&&tab==='profile'&&!vp);if(!$('admp').hidden)$('admt').textContent='@'+(vu||me);
+  if(me){const p=profs[me]||{};$('meav').outerHTML=`<div class="av" id="meav" style="background:${p.color||col(me)}">${avIn(me,p)}</div>`}
+  $('tabs').innerHTML=opened.map(k=>{const v=esc(tn(k));return `<div class="tabw${k===tab?' on':''}${k==='home'?' pin':''}${k===newTab?' new':''}"><button role="tab" data-tab="${k}" aria-selected="${k===tab}">${v}</button>${k==='home'?'':`<button class="x" data-close="${k}" aria-label="Close ${v} tab">×</button>`}</div>`}).join('');
+  if(document.activeElement!==$('addr'))$('addr').value='nook.app/'+tab+(tab==='profile'&&vu&&vu!==me?'/'+vu:'')+(tab==='dms'&&chat?'/'+chat:'');
+  $('homebar').hidden=tab!=='feed';
+  $('comp').hidden=!(me&&tab==='feed');$('ff').hidden=!(me&&tab==='friends');$('dmf').hidden=!(me&&tab==='dms'&&chat);const inG=!!(me&&tab==='groups'&&gid&&isMember(gid,me));$('gf').hidden=!inG;$('gi').hidden=!inG;$('gcf').hidden=!(me&&tab==='groups'&&!gid);$('fe').hidden=!$('fe').textContent;
+  document.querySelectorAll('[data-sort]').forEach(b=>b.classList.toggle('on',b.dataset.sort===sort));
+  $('view').innerHTML=!['home','feed','settings','custom','events','leaderboard'].includes(tab)&&!me?empty('Log in to use this tab.'):{home:rHub,feed:rFeed,friends:rFriends,dms:rDms,profile:rProfile,settings:rSettings,custom:rCustom,groups:rGroups,shop:rShop,admin:rAdmin,events:rEvents,leaderboard:rLeaderboard}[tab]();
+  editing=tab==='custom';if(editing)mountCustom();
+}
+const nav=()=>{render();const v=$('view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter')};
+function closeTab(t){if(t==='home')return;const i=opened.indexOf(t),el=document.querySelector(`[data-close="${t}"]`);el&&el.parentElement.classList.add('out');setTimeout(()=>{editing=false;const was=tab===t;opened=opened.filter(x=>x!==t);if(was){tab=opened[Math.max(0,i-1)];editing=false;armed=false}was?nav():render()},el?150:0)}
+function go(t,u){if(t==='admin'&&!isAdmin())return;if(!opened.includes(t)){opened.push(t);newTab=t;setTimeout(()=>newTab=null,400)}vp=null;tab=t;editing=false;armed=false;armU=null;$('fe').textContent='';if(t==='profile')vu=u||null;if(t==='dms')chat=u||null;if(t==='groups')gid=u||null;nav();window.scrollTo(0,0)}
+$('arf').innerHTML='<option value="all">All areas</option>'+Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('pa').innerHTML=Object.entries(AREAS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('arf').addEventListener('change',e=>{cur=e.target.value;if(cur!=='all')$('pa').value=cur;render()});
+$('addr').addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const parts=e.target.value.trim().toLowerCase().replace(/^nook\.app\/?/,'').split('/').filter(Boolean);
+  e.target.blur();
+  TABS.some(t=>t[0]===(parts[0]||'home'))?go(parts[0]||'home',parts[1]):render();
+});
+$('sw').addEventListener('click',()=>setMode(mode==='login'?'signup':'login'));
+async function logout(){if(sb)await sb.auth.signOut();me=null;authUser=null;setMode('login');authUI();render()}
+let authUser=null,pendingName=null;
+async function claimName(u){
+  const {error}=await sb.rpc('claim_username',{u});
+  if(error){$('er').textContent=/duplicate|unique/i.test(error.message)?'That username is taken.':error.message;return false}
+  me=u;try{await db.doc('accounts/'+u).set({at:Date.now()})}catch(x){}
+  setMode('login');authUI();if(db)db.reload();render();return true;
+}
+async function afterLogin(session){
+  authUser=session?session.user:null;isOwner=false;
+  if(!authUser){me=null;setMode('login');authUI();if(db)db.reload();render();return}
+  const {data}=await sb.from('usernames').select('username').eq('user_id',authUser.id).maybeSingle();
+  if(data)me=data.username;
+  else if(pendingName){const {error}=await sb.rpc('claim_username',{u:pendingName});if(!error)me=pendingName;pendingName=null}
+  if(me){try{const r=await sb.rpc('am_i_owner');isOwner=!!r.data}catch(e){}}
+  if(me){setMode('login');if(db)db.doc('accounts/'+me).get().then(x=>{if(!x.exists)return db.doc('accounts/'+me).set({at:Date.now()})}).catch(()=>{})}
+  else setMode('claim');
+  authUI();if(db)db.reload();render();
+}
+if(sb)sb.auth.onAuthStateChange((ev,sess)=>{setTimeout(()=>afterLogin(sess),0)});
+$('af').addEventListener('submit',async e=>{
+  e.preventDefault();const er=$('er');er.textContent='';
+  if(!sb){er.textContent='The app isn’t connected yet. See the setup notes.';return}
+  const u=$('u').value.trim().toLowerCase(),em=$('em').value.trim(),p=$('p').value;
+  if(mode!=='login'&&!/^[a-z0-9_]{3,20}$/.test(u)){er.textContent='Username: 3–20 letters, numbers or underscores.';return}
+  $('ab').disabled=true;
+  try{
+    if(mode==='claim'){await claimName(u)}
+    else{
+      if(!em||!p){er.textContent='Enter your email and password.';return}
+      if(mode==='signup'){
+        const miss=[];
+        if(p.length<8)miss.push('8+ characters');
+        if(!/[a-z]/.test(p))miss.push('a lowercase letter');
+        if(!/[A-Z]/.test(p))miss.push('a capital letter');
+        if(!/[0-9]/.test(p))miss.push('a number');
+        if(!/[^A-Za-z0-9]/.test(p))miss.push('a symbol');
+        if(miss.length){er.textContent='Password needs '+miss.join(', ')+'.';return}
+        const t=await sb.from('usernames').select('username').eq('username',u).maybeSingle();
+        if(t.data){er.textContent='That username is taken.';return}
+        pendingName=u;
+        const {data,error}=await sb.auth.signUp({email:em,password:p});
+        if(error){pendingName=null;er.textContent=error.message;return}
+        if(!data.session)er.textContent='Check your email to confirm your account, then log in.';
+      }else{
+        const {error}=await sb.auth.signInWithPassword({email:em,password:p});
+        if(error)er.textContent='Wrong email or password.';
+      }
+    }
+  }catch(x){er.textContent='Something went wrong. Try again.'}
+  finally{$('ab').disabled=false}
+});
+const userOps=u=>[...posts.filter(p=>p.by===u).map(p=>'posts/'+p.id),...likes.filter(l=>l.by===u).map(l=>'likes/'+l.id),...cms.filter(c=>c.by===u).map(c=>'comments/'+c.id),...friends.filter(f=>f.a===u||f.b===u).map(f=>'friends/'+f.id),...dms.filter(m=>m.from===u).map(m=>'dms/'+m.id),...members.filter(m=>m.u===u).map(m=>'members/'+m.id),...gmsgs.filter(m=>m.by===u).map(m=>'gmsgs/'+m.id),...invites.filter(i=>i.u===u||i.from===u).map(i=>'invites/'+i.id),...groups.filter(g=>g.owner===u).flatMap(g=>grpOps(g.id)),...shop.filter(x=>x.seller===u).map(x=>'shop/'+x.id),...rsvps.filter(r=>r.u===u).map(r=>'rsvps/'+r.id),'profiles/'+u,'accounts/'+u];
+const delUser=u=>Promise.all(userOps(u).map(p=>db.doc(p).delete().catch(()=>{})));
+async function delAcc(){await delUser(me);try{await sb.rpc('delete_own_user')}catch(e){}armed=false;await logout()}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  try{
+    if(d.tab)return go(d.tab);
+    if(d.close)return closeTab(d.close);
+    if(d.oauth){if(sb)await sb.auth.signInWithOAuth({provider:d.oauth,options:{redirectTo:location.href.split('#')[0]}});return}
+    if(d.ctab){ctab=d.ctab;editing=false;return nav()}
+    if(d.lb){lb=d.lb;return nav()}
+    if(d.hide){const h=new Set(ui.hide||[]);h.has(d.hide)?h.delete(d.hide):h.add(d.hide);ui.hide=[...h];saveUI();return render()}
+    if('hprev' in d)return playHype('you',true);
+    if(d.grp){gid=d.grp;armed=false;return nav()}
+    if('gback' in d){gid=null;armed=false;return nav()}
+    if('rmimg' in d){pend=null;pendV=null;return showPend()}
+    if(d.attach&&me&&db){
+      if(muted())return;
+      const m=await pickMedia();if(!m)return;
+      if(m.err){say(m.err);return}
+      if(d.attach==='post'){pend=m.img||null;pendV=m.vid||null;return showPend()}
+      const x=m.img?{img:m.img}:{vid:m.vid};
+      if(d.attach==='dm'&&chat){await db.collection('dms').add({pair:pair(me,chat),from:me,to:chat,text:$('dt').value.trim(),...x,at:Date.now()});$('dt').value='';return}
+      if(d.attach==='grp'&&gid){await db.collection('gmsgs').add({g:gid,by:me,text:$('gt').value.trim(),...x,at:Date.now()});$('gt').value='';return}
+      return}
+    if(d.gl!==undefined){gch=d.gl;ctab='font';editing=false;return nav()}
+    if(d.set){const i=d.set.indexOf(':');ui[d.set.slice(0,i)]=d.set.slice(i+1);saveUI();applyUI();editing=false;return render()}
+    if('reset' in d){ui={};saveUI();applyUI();editing=false;return render()}
+    if('resetcols' in d){delete ui.cols;saveUI();applyUI();editing=false;return nav()}
+    if(d.pb!==undefined){pbn=d.pb;document.querySelectorAll('[data-pb]').forEach(x=>x.classList.toggle('on',x.dataset.pb===pbn));return}
+    if(d.pc!==undefined){pcol=d.pc;document.querySelectorAll('[data-pc]').forEach(x=>x.classList.toggle('on',x.dataset.pc===pcol));return}
+    if(d.ptab){ptab=d.ptab;vp=null;return nav()}
+    if(d.vp){vp=d.vp;return nav()}
+    if('vpback' in d){vp=null;return nav()}
+    if(d.sort){sort=d.sort;return render()}
+    if(d.user)return go('profile',d.user);
+    if(d.dm)return go('dms',d.dm);
+    if(d.chat){chat=d.chat;return nav()}
+    if('back' in d){chat=null;return nav()}
+    if(d.cm){open[d.cm]=!open[d.cm];return render()}
+    if(d.theme){theme=d.theme;try{localStorage.setItem('nook-theme',theme)}catch(x){}applyTheme();return render()}
+    if(!me||!db)return;
+    if(timedOut()&&(d.like||d.addf||d.join||d.acc||d.hype||d.buy||d.rsvp)){muted();return}
+    if(d.like){const r=db.doc('likes/'+d.like+'_'+me);if(!likes.some(l=>l.post===d.like&&l.by===me)){justLiked=d.like;setTimeout(()=>justLiked=null,700)}likes.some(l=>l.post===d.like&&l.by===me)?await r.delete():await r.set({post:d.like,by:me,to:(posts.find(x=>x.id===d.like)||{}).by||''})}
+    else if(d.del)await db.doc('posts/'+d.del).delete();
+    else if(d.addf)await db.doc('friends/'+me+'_'+d.addf).set({a:me,b:d.addf});
+    else if(d.unf)await db.doc('friends/'+me+'_'+d.unf).delete();
+    else if(d.delcm)await db.doc('comments/'+d.delcm).delete();
+    else if(d.hype){
+      if(d.hype===me)return;
+      if(coins(me)<10){say('You need 10 coins to hype.');return}
+      const w=hypeWait(me);if(w>0){say('You can hype again in '+dur(w)+'.');return}
+      await db.collection('hypes').add({from:me,to:d.hype,at:Date.now()});say('You hyped @'+d.hype+'!');
+    }
+    else if(d.rsvp){const r=db.doc('rsvps/'+d.rsvp+'_'+me);if(rsvps.some(x=>x.ev===d.rsvp&&x.u===me))await r.delete();else await r.set({ev:d.rsvp,u:me})}
+    else if(d.aw){
+      if(!isAdmin())return;const [b,u]=d.aw.split(':');
+      try{const r=db.doc('awards/'+b+'_'+u);if(awards.some(a=>a.badge===b&&a.to===u))await r.delete();else await r.set({badge:b,to:u,at:Date.now(),by:me})}catch(err){say('Only the page owner can do that.')}
+    }
+    else if(d.bdel){if(!isAdmin())return;try{await Promise.all([db.doc('badges/'+d.bdel).delete(),...awards.filter(a=>a.badge===d.bdel).map(a=>db.doc('awards/'+a.id).delete())])}catch(err){say('Only the page owner can do that.')}}
+    else if(d.evdel){if(!isAdmin())return;try{await Promise.all([db.doc('events/'+d.evdel).delete(),...rsvps.filter(r=>r.ev===d.evdel).map(r=>db.doc('rsvps/'+r.id).delete())])}catch(err){say('Only the page owner can do that.')}}
+    else if(d.evrw){
+      if(!isAdmin())return;const ev=events.find(x=>x.id===d.evrw);if(!ev||ev.rewarded)return;
+      const us=rsvps.filter(r=>r.ev===ev.id).map(r=>r.u),ops=[];
+      us.forEach(u=>{if(ev.coins)ops.push(db.collection('grants').add({to:u,n:+ev.coins,by:me,at:Date.now(),ev:ev.id}));if(ev.badge)ops.push(db.doc('awards/'+ev.badge+'_'+u).set({badge:ev.badge,to:u,at:Date.now(),by:me}))});
+      try{await Promise.all([...ops,db.doc('events/'+ev.id).update({rewarded:true})]);say('Rewarded '+us.length+' attendees.')}catch(err){say('Only the page owner can do that.')}
+    }
+    else if(d.buy){
+      const x=shop.find(y=>y.id===d.buy);if(!x||x.active===false||x.seller===me||owned(x.id))return;
+      if(coins(me)<x.price){say('You need '+x.price+' coins.');return}
+      await db.doc('sales/'+x.id+'_'+me).set({design:x.id,buyer:me,seller:x.seller,price:x.price,name:x.name,at:Date.now()});say('Bought “'+x.name+'”. Tap Use to apply it.');
+    }
+    else if(d.usedes){
+      const sn=await db.doc('designs/'+d.usedes).get();if(!sn.exists){say('That design is no longer available.');return}
+      await applyDesign(sn.data().data);say('Design applied. You can undo it from the Shop tab.');render();
+    }
+    else if('undodes' in d){
+      if(!prevLook){try{prevLook=JSON.parse(localStorage.getItem('nook-prev')||'null')}catch(e){}}
+      if(!prevLook){say('Nothing to undo.');return}
+      ui=prevLook.ui;cust=prevLook.cust;prevLook=null;saveUI();saveCust();applyUI();applyCust();
+      if(ui.font==='custom')try{await applyFont()}catch(e){}
+      say('Went back to your previous look.');render();
+    }
+    else if(d.delist)await db.doc('shop/'+d.delist).update({active:false});
+    else if(d.relist)await db.doc('shop/'+d.relist).update({active:true});
+    else if(d.shopdel){if(!isAdmin())return;await Promise.all([db.doc('shop/'+d.shopdel).delete(),db.doc('designs/'+d.shopdel).delete()])}
+    else if('anoff' in d){if(!isAdmin())return;try{await db.doc('announce/current').set({text:'',on:false,at:Date.now(),by:me});say('Announcement cleared.')}catch(err){say('Only the page owner can do that.')}}
+    else if(d.act){
+      if(!isAdmin())return;
+      const [k,u,v]=d.act.split(':');
+      try{
+        if(k==='give'){await db.collection('grants').add({to:u,n:+v,by:me,at:Date.now()});say((+v>0?'Gave ':'Took ')+Math.abs(+v)+' coins '+(+v>0?'to':'from')+' @'+u+'.')}
+        else if(k==='reset'){await db.doc('resets/'+u).set({at:Date.now(),by:me});say('Reset the hype timer for @'+u+'.')}
+        else if(k==='timeout'){await db.doc('timeouts/'+u).set({until:Date.now()+(+v)*6e4,by:me});say('Timed out @'+u+'.')}
+        else if(k==='lift'){await db.doc('timeouts/'+u).delete();say('Lifted the timeout for @'+u+'.')}
+        else if(k==='admin'){if(u===me)return;if(admins.some(a=>a.id===u))await db.doc('admins/'+u).delete();else await db.doc('admins/'+u).set({at:Date.now(),by:me})}
+        else if(k==='bdgs'){badgeFor=badgeFor===u?null:u;render()}
+        else if(k==='remove'){if(u===me)return;if(armU!==u){armU=u;render()}else{await delUser(u);armU=null;accts=accts.filter(a=>a.id!==u);say('Removed @'+u+'.');render()}}
+      }catch(err){say('Only the page owner can do that.')}
+    }
+    else if('pfp' in d){const m=await pickMedia({sq:192,only:'image'});if(!m)return;if(m.err){say(m.err);return}ppic=m.img;const e=$('pfpv');if(e)e.innerHTML=`<img src="${ppic}" alt="">`}
+    else if('pfprm' in d){ppic='';const e=$('pfpv');if(e)e.innerHTML=esc(((profs[me]||{}).emoji||me[0]).toUpperCase())}
+    else if(d.adm){
+      if(!isAdmin())return;const u=vu||me;
+      try{
+        if(d.adm==='give'){const n=Math.trunc(+$('gn2').value);if(!n){say('Enter a number of coins.');return}await db.collection('grants').add({to:u,n,by:me,at:Date.now()});say((n>0?'Gave ':'Took ')+Math.abs(n)+' coins '+(n>0?'to':'from')+' @'+u+'.')}
+        else if(d.adm==='reset'){await db.doc('resets/'+u).set({at:Date.now(),by:me});say('Reset the hype timer for @'+u+'.')}
+        else if(d.adm==='timeout'){const mins=+$('tos').value;await db.doc('timeouts/'+u).set({until:Date.now()+mins*6e4,by:me});say('Timed out @'+u+' until '+fmtT(Date.now()+mins*6e4)+'.')}
+        else if(d.adm==='untimeout'){await db.doc('timeouts/'+u).delete();say('Lifted the timeout for @'+u+'.')}
+      }catch(err){say('Only the page owner can use admin tools.')}
+    }
+    else if(d.rmuser){if(!isAdmin()||d.rmuser===me)return;if(armU!==d.rmuser){armU=d.rmuser;render()}else{await delUser(d.rmuser);armU=null;go('home')}}
+    else if(d.join)await db.doc('members/'+d.join+'_'+me).set({g:d.join,u:me,role:'member'});
+    else if(d.leave)await db.doc('members/'+d.leave+'_'+me).delete();
+    else if(d.acc){await db.doc('members/'+d.acc+'_'+me).set({g:d.acc,u:me,role:'member'});await db.doc('invites/'+d.acc+'_'+me).delete()}
+    else if(d.dec)await db.doc('invites/'+d.dec+'_'+me).delete();
+    else if(d.gvis)await db.doc('groups/'+gid).update({vis:d.gvis});
+    else if('gdel' in d){if(!armed){armed=true;render()}else{{const ops=grpOps(gid);await Promise.all(ops.slice(1).map(p=>db.doc(p).delete().catch(()=>{})));await db.doc(ops[0]).delete().catch(()=>{})}armed=false;gid=null;nav()}}
+    else if('editbio' in d){editing=true;pcol=(profs[me]||{}).color||'';ppic=(profs[me]||{}).pfp||'';pbn=(profs[me]||{}).bn||'';$('view').firstElementChild.innerHTML=editHTML();$('en').focus()}
+    else if('savebio' in d){await db.doc('profiles/'+me).set({bio:$('bt').value.trim(),name:$('en').value.trim(),emoji:$('ee').value.trim(),color:pcol,pfp:ppic,bn:pbn});editing=false;render()}
+    else if('cancelbio' in d){editing=false;render()}
+    else if('out' in d)logout();
+    else if('delacc' in d){if(!armed){armed=true;render()}else await delAcc()}
+  }catch(err){$('fe').textContent='Couldn’t save that. Check that you have permission here.';$('fe').hidden=false}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='ac'||t.id==='ac2'){ui.acc=t.value;saveUI();applyUI()}
+  else if(t.dataset&&t.dataset.cv){ui.cols=ui.cols||{};ui.cols[t.dataset.cv]=t.value;saveUI();applyUI()}
+  else if(t.dataset&&t.dataset.sl){ui[t.dataset.sl]=t.value;saveUI();applyUI()}
+  else if(t.dataset&&t.dataset.nm){const k=t.dataset.nm;if(k==='appn')ui.appn=t.value.trim();else{ui.names=ui.names||{};const tk=k.slice(4);if(t.value.trim())ui.names[tk]=t.value.trim();else delete ui.names[tk]}saveUI();applyUI()}
+});
+document.addEventListener('submit',async e=>{
+  const f=e.target;if(f.id==='af')return;e.preventDefault();if(!me||!db)return;if(timedOut()){muted();return}
+  try{
+    if(f.dataset.form){const i=f.querySelector('input'),v=i.value.trim();if(!v)return;i.value='';await db.collection('comments').add({post:f.dataset.form,by:me,text:v,at:Date.now()});const n=document.querySelector(`[data-form="${f.dataset.form}"] input`);n&&n.focus()}
+    else if(f.id==='dmf'){const v=$('dt').value.trim();if(!v||!chat)return;$('dt').value='';await db.collection('dms').add({pair:pair(me,chat),from:me,to:chat,text:v,at:Date.now()})}
+    else if(f.id==='shf'){
+      const name=$('sn').value.trim(),price=Math.max(0,Math.min(999,Math.trunc(+$('sp').value||0)));
+      if(!name){say('Give your design a name.');return}
+      const data=snapLook();if(JSON.stringify(data).length>235000){say('This look is too big to sell. Try a smaller background or fewer drawn letters.');return}
+      const fee=5+changes(data);if(coins(me)<fee){say('Listing costs '+fee+' coins (5 plus 1 per change). You have '+coins(me)+'.');return}
+      const th=await mkThumb();
+      const ref=await db.collection('shop').add({seller:me,name:name.slice(0,40),desc:$('sd').value.trim().slice(0,160),price,active:true,tags:tagsOf(data),thumb:th,acc:data.ui.acc||'',at:Date.now()});
+      await db.doc('designs/'+ref.id).set({data});await db.collection('fees').add({by:me,n:fee,design:ref.id,at:Date.now()});
+      $('sn').value='';$('sd').value='';$('sp').value='';say('Listed “'+name+'” for '+price+' coins. Fee paid: '+fee+'.');
+    }
+    else if(f.id==='evf'){
+      if(!isAdmin())return;const t=$('et').value.trim(),start=new Date($('es').value).getTime();
+      if(!t||!start){say('Add a title and a start time.');return}
+      try{await db.collection('events').add({title:t.slice(0,60),desc:$('ed').value.trim().slice(0,300),start,end:start+(+$('edu').value)*6e4,coins:Math.max(0,Math.trunc(+$('ec').value||0)),badge:$('eb').value,rewarded:false,at:Date.now(),by:me});['et','ed','es','ec'].forEach(i=>$(i).value='');say('Event created.')}catch(err){say('Only the page owner can do that.')}
+    }
+    else if(f.id==='anf'){
+      const v=$('ant').value.trim();if(!v||!isAdmin())return;
+      try{await db.doc('announce/current').set({text:v,on:true,at:Date.now(),by:me});$('ant').value='';say('Announcement posted.')}catch(err){say('Only the page owner can do that.')}
+    }
+    else if(f.id==='gcf'){
+      const n=$('gn').value.trim();if(!n)return;
+      const ref=await db.collection('groups').add({name:n,desc:$('gd').value.trim(),vis:$('gv').value,owner:me,at:Date.now()});
+      await db.doc('members/'+ref.id+'_'+me).set({g:ref.id,u:me,role:'owner'});
+      $('gn').value='';$('gd').value='';gid=ref.id;nav();
+    }
+    else if(f.id==='gf'){const v=$('gt').value.trim();if(!v||!gid)return;$('gt').value='';await db.collection('gmsgs').add({g:gid,by:me,text:v,at:Date.now()})}
+    else if(f.id==='gi'){
+      const u=$('gu').value.trim().toLowerCase(),fe=$('fe');fe.textContent='';if(!u||!gid)return;
+      if(!(await db.doc('accounts/'+u).get()).exists){fe.textContent='No user with that username.';return}
+      if(isMember(gid,u)){fe.textContent='Already in this group.';return}
+      await db.doc('invites/'+gid+'_'+u).set({g:gid,u,from:me});$('gu').value='';fe.textContent='Invite sent to @'+u+'.';
+    }
+    else if(f.id==='ff'){
+      const u=$('fu').value.trim().toLowerCase(),fe=$('fe');fe.textContent='';if(!u)return;
+      if(u===me){fe.textContent='That’s you.';return}
+      if(friendsOf(me).includes(u)){fe.textContent='Already friends.';return}
+      if(!(await db.doc('accounts/'+u).get()).exists){fe.textContent='No user with that username.';return}
+      await db.doc('friends/'+me+'_'+u).set({a:me,b:u});$('fu').value='';
+    }
+  }catch(err){$('fe').textContent='Couldn’t send that. Try again.';$('fe').hidden=false}
+});
+const t=$('t'),go2=$('go'),c=$('c');
+t.addEventListener('input',()=>{c.textContent=280-t.value.length;go2.disabled=!(t.value.trim()||pend||pendV)});
+go2.addEventListener('click',async()=>{
+  const v=t.value.trim();if(!(v||pend||pendV)||!db||!me)return;if(muted())return;go2.disabled=true;
+  try{await db.collection('posts').add({by:me,text:v,img:pend||'',vid:pendV||'',area:$('pa').value,at:Date.now()});t.value='';c.textContent=280;pend=null;pendV=null;showPend()}
+  catch(err){go2.disabled=false;$('view').insertAdjacentHTML('afterbegin',empty('Couldn’t post. You may have view-only access.'))}
+});
+(function(){
+  const strokes=[],pad=mkPad($('bcv'),{fw:()=>0.06,get:()=>({c:$('bcol').value,w:(+$('bsz').value)/160})},strokes);
+  $('bundo').onclick=pad.undo;$('bclr').onclick=pad.clear;
+  $('bmk').onclick=async()=>{
+    if(!isAdmin()||!db)return;const name=$('bnm').value.trim();
+    if(!strokes.length){say('Draw the badge first.');return}
+    if(!name){say('Give the badge a name.');return}
+    try{await db.collection('badges').add({name:name.slice(0,24),img:pad.out('image/png'),at:Date.now(),by:me});strokes.length=0;pad.paint();$('bnm').value='';say('Badge created. Hand it out from the user list.')}
+    catch(err){say('Only the page owner can do that.')}
+  };
+})();
+setMode('login');authUI();$('view').innerHTML=empty('Loading…');
+(async()=>{
+  if(!sb){$('view').innerHTML=empty('Add your Supabase URL and key near the top of index.html. See README.md.');return}
+  db=makeDb(sb);
+  if(!db){$('view').innerHTML=empty('Open Nook in claude.ai and sign in to join.');return}
+  const err=()=>$('view').innerHTML=empty('Couldn’t reach the database. Check the setup steps in README.md.');
+  const sub=(n,fn,q)=>(q||db.collection(n)).onSnapshot(s=>{fn(s.docs.map(d=>({id:d.id,...d.data()})));render()},err);
+  sub('posts',x=>posts=x,db.collection('posts').orderBy('at','desc').limit(100));
+  sub('likes',x=>likes=x);sub('comments',x=>cms=x);sub('friends',x=>friends=x);
+  sub('admins',x=>admins=x);sub('shop',x=>shop=x);sub('badges',x=>badges=x);sub('awards',x=>awards=x);sub('events',x=>events=x);sub('rsvps',x=>rsvps=x);sub('fees',x=>fees=x);sub('sales',x=>sales=x);sub('announce',x=>announce=x);sub('grants',x=>grants=x);sub('resets',x=>resets=x);sub('timeouts',x=>timeouts=x);sub('hypes',x=>{hypes=x;detectHype(x)});sub('dms',x=>dms=x);sub('groups',x=>groups=x);sub('members',x=>members=x);sub('invites',x=>invites=x);sub('gmsgs',x=>gmsgs=x,db.collection('gmsgs').orderBy('at','asc'));sub('profiles',x=>profs=Object.fromEntries(x.map(p=>[p.id,p])));
+})();
+</script>
+</body>
+</html>
